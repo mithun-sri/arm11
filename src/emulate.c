@@ -8,7 +8,7 @@ FILE* fPtr;
 
 struct REGISTERS {
     uint32_t general[13], sp, lr, pc, cpsr; 
-  };
+};
 
 int fileReader(FILE* fPtr) {
     if (fPtr == NULL) {
