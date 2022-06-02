@@ -27,7 +27,7 @@ int fileReader(FILE* fPtr) {
 }
 
 int main(void) {
-    fPtr = fopen("filename.bin", "r");
+    fPtr = fopen("filename.bin", "rb");
     struct REGISTERS r = {.general = {0,0,0,0,0,0,0,0,0,0,0,0,0}, .sp = 0, .lr = 0, .pc = 0, .cpsr = 0};
 
     fileReader(fPtr); 
