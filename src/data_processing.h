@@ -3,6 +3,8 @@
 
 #define NUM_REGISTER_BITS 32
 #define MAX_STORE_VALUE (1 << 32 - 1)
+#define CARRY 1
+#define NO_CARRY 0
 
 typedef enum {
 	AND = 0,

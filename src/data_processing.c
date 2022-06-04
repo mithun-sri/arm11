@@ -2,7 +2,7 @@
 
 int get_bit(uint32_t content) 
 {
-	return content > 0 ? 1 : 0;
+	return content > 0 ? CARRY : NO_CARRY;
 }
 
 Operand2 logical_left_shift(uint8_t shift_amount, uint32_t content) 
