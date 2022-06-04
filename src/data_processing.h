@@ -1,6 +1,8 @@
 #ifndef DATA_PROCESSING_H
 #define DATA_PROCESSING_H
 
+#define NUM_REGISTER_BITS 32
+
 typedef enum {
 	AND = 0,
 	EOR = 1,
@@ -24,15 +26,15 @@ typedef enum {
 
 typedef struct {
 	uint8_t carry;
-	uint32_t val;
+	uint32_t value;
 } Operand2;
 
-Operand2 logical_left_shift(uint8_t shift_amount, uint32_t content);
+Operand2 logical_left_shift(uint8_t, uint32_t);
 
-Operand2 logical_right_shift(uint8_t shift_amount, uint32_t content);
+Operand2 logical_right_shift(uint8_t, uint32_t);
 
-Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content);
+Operand2 arithmetic_right_shift(uint8_t, uint32_t);
 
-Operand2 rotate_right(uint8_t shift_amount, uint32_t content);
+Operand2 rotate_right(uint8_t, uint32_t);
 
 #endif
