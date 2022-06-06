@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "emulate.h"
 
 int single_data_transfer(int l_bit, int offset_bit, int index_bit, int up_bit, uint32_t rn, uint32_t offset, uint32_t rd){
     /* Check pre/post indexing */
@@ -20,21 +21,21 @@ int single_data_transfer(int l_bit, int offset_bit, int index_bit, int up_bit, u
 void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd){
     if (l_bit == 1){
         /* Load instruction */
-        register_write(rd, new_address);
+        register_write(&rd, new_address);
     } else if (l_bit == 0){
         /* Store instruction */
-        memory_write(rd, new_address);
+        memory_write(&rd, new_address);
     }
 }
 
 /* Write from memory to register */
-void register_write(uint32_t dest, uint32_t address){
-
+void register_write(uint32_t *dest, uint32_t value){
+    *dest = value;
 }
 
 /* Write from register to memory */
-void memory_write(uint32_t src, uint32_t address){
-
+void memory_write(uint8_t *location, uint32_t value){
+    
 }
 
 uint32_t compute_address(uint32_t value, uint32_t offset, int up_bit){
