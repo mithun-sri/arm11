@@ -36,105 +36,105 @@ void update_v(uint32_t* cpsr, int flag) {
   }
 }
 
-void and(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void and(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn & operand2;
   *rd = res;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
   }
 }
 
-void eor(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void eor(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn ^ operand2;
   *rd = res;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
   }
 }
 
-void sub(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void sub(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn - operand2;
   int flag = (rn >= operand2);
   *rd = res;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
     update_c(cpsr, flag);
   }
 }
 
-void rsb(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void rsb(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = operand2 - rn;
   int flag = (operand2 >= rn);
   *rd = res;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
     update_c(cpsr, flag);
   }
 }
 
-void add(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void add(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn + operand2;
   int flag = (res < rn || res < operand2);
   *rd = res;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
     update_c(cpsr, flag);
   }
 }
 
-void tst(int sBit, uint32_t* cpsr, int rn, int operand2) {
+void tst(int s_bit, uint32_t* cpsr, int rn, int operand2) {
   int res = rn & operand2; 
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
   }
 }
 
-void teq(int sBit, uint32_t* cpsr, int rn, int operand2) {
+void teq(int s_bit, uint32_t* cpsr, int rn, int operand2) {
   int res = rn ^ operand2;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
   }
 }
 
-void cmp(int sBit, uint32_t* cpsr, int rn, int operand2) {
+void cmp(int s_bit, uint32_t* cpsr, int rn, int operand2) {
   int res = rn - operand2;
   int flag = (rn >= operand2);
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
     update_c(cpsr, flag);
   }
 }
 
-void orr(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void orr(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn | operand2;
   *rd = res;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, res);
     update_z(cpsr, res);
   }
 }
 
-void mov(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void mov(int s_bit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   *rd = operand2;
 
-  if (sBit) {
+  if (s_bit) {
     update_n(cpsr, operand2);
     update_z(cpsr, operand2);
   }
