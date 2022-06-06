@@ -1,8 +1,17 @@
 #include "data_processing.h"
 
-int get_carry_bit(uint32_t content) 
+uint8_t get_bit(uint32_t content) 
 {
-	return content > 0 ? CARRY : NO_CARRY;
+	return content > 0 ? 1 : 0;
+}
+
+uint32_t create_contiguous_mask(uint8_t num_bits)
+{
+	uint32_t mask = 1;
+	for (int i=0; i<num_bits-1; i++) {
+		mask = mask | mask << 1;
+	}
+	return mask;
 }
 
 // add functionality to update CPSR flags
@@ -59,7 +68,7 @@ Operand2 logical_left_shift(uint8_t shift_amount, uint32_t content)
 {
 	Operand2 res;
 	res.value = (uint32_t) (content << shift_amount);
-	res.carry = get_carry_bit(1 << (NUM_REGISTER_BITS - shift_amount) & content); 
+	res.carry = get_bit(1 << (NUM_REGISTER_BITS - shift_amount) & content); 
 
 	return res; 
 }
@@ -68,7 +77,7 @@ Operand2 logical_right_shift(uint8_t shift_amount, uint32_t content)
 {
 	Operand2 res;
 	res.value = (uint32_t) (content >> shift_amount);
-	res.carry = get_carry_bit(1 << shift_amount & content); 
+	res.carry = get_bit(1 << shift_amount & content); 
 
 	return res; 
 }
@@ -76,13 +85,21 @@ Operand2 logical_right_shift(uint8_t shift_amount, uint32_t content)
 Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content) 
 {
 	Operand2 res = logical_right_shift(shift_amount, content);
-	res.value = res.value // Perform extract bit and OR 
+	uint8_t msb = get_bit(MSB_MASK & content);
+	for (int i=0; i<shift_amount; i++) {
+		res.value = res.value | msb << (MSB_offset - i);	
+	}
+
+	return res;
 }
 
 Operand2 rotate_right(uint8_t shift_amount, uint32_t content) 
 {
 	Operand2 res = logical_right_shift(shift_amount, content);
-	res.value = res.value // Extract Bits shifted and OR with rotated
+	uint32_t mask = create_contigouous_mask(shift_amount);	
+	res.value = res.value & (mask & content) << (MSB_OFFSET - shift_amount); 
+	
+	return res;
 }
 
 void manage(uint32_t instruction, struct REGISTERS* r) {

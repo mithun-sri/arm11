@@ -34,6 +34,8 @@
 
 #define NUM_REGISTER_BITS 32
 #define MAX_STORE_VALUE (1 << 32 - 1)
+#define MSB_MASK (1 << 31)
+#define MSB_OFFSET 31
 #define CARRY 1
 #define NO_CARRY 0
 
