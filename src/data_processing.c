@@ -177,49 +177,49 @@ Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
 void manage(uint32_t instruction, struct REGISTERS* r) {
   int bit27 = (instruction & BIT_27_MASK) >> BIT_27_OFFSET;
   int bit26 = (instruction & BIT_26_MASK) >> BIT_26_OFFSET;
-  int iBit = (instruction & I_BIT_MASK) >> I_BIT_OFFSET;
-  int opcode = (instruction & OPCODE_MASK) >> OPCODE_OFFSET;
-  int sBit = (instruction & S_BIT_MASK) >> S_BIT_OFFSET;
-  int rnPos = (instruction & RN_MASK) >> RN_OFFSET;
-  uint32_t rn = r->general[rnPos];
-  int rdPos = (instruction & RD_MASK) >> RD_OFFSET;
-  uint32_t *rd = &r->general[rdPos];
+  int i_bit = (instruction & I_BIT_MASK) >> I_BIT_OFFSET;
+  Opcode opcode = (instruction & OPCODE_MASK) >> OPCODE_OFFSET;
+  int s_bit = (instruction & S_BIT_MASK) >> S_BIT_OFFSET;
+  int rn_pos = (instruction & RN_MASK) >> RN_OFFSET;
+  uint32_t rn = r->general[rn_pos];
+  int rd_pos = (instruction & RD_MASK) >> RD_OFFSET;
+  uint32_t *rd = &r->general[rd_pos];
   uint16_t operand2 = (instruction & OPERAND_2_MASK);
   uint32_t *cpsr = &r->cpsr;
   
-  if (iBit) {
+  if (i_bit) {
     int rotate = 2 * (operand2 >> ROTATE_OFFSET);
     int constant = operand2 & OPERAND_2_IMMEDIATE_MASK;
     // operand2 = constant rotated right by rotate value
   } else {
     int rm = operand2 & RM_MASK;
     // represents bit no. 4 in shift
-    int optionalBit = (operand2 & SHIFT_OPTIONAL_BIT_MASK) >> SHIFT_VALUE_OFFSET;
+    int optional_bit = (operand2 & SHIFT_OPTIONAL_BIT_MASK) >> SHIFT_VALUE_OFFSET;
     int shift = (operand2 & SHIFT_VALUE_MASK) >> SHIFT_VALUE_OFFSET;
-    int shiftType = (shift & SHIFT_TYPE_MASK) >> LAST_BIT_OFFSET;
+    int shift_type = (shift & SHIFT_TYPE_MASK) >> LAST_BIT_OFFSET;
     
-    if (optionalBit) {
-      int shiftRegister = shift >> LAST_BIT_OFFSET;
-      int lastBit = shift & LAST_BIT_MASK;
+    if (optional_bit) {
+      int shift_register = shift >> LAST_BIT_OFFSET;
+      int last_bit = shift & LAST_BIT_MASK;
       // perform shift
     } else {
-      int shiftAmount = shift >> SHIFT_AMOUNT_OFFSET;
+      int shift_amount = shift >> SHIFT_AMOUNT_OFFSET;
       // perform shift
     }
   }
 
   if (succeeds(instruction, r)) {
     switch (opcode) {
-    case 0: and(sBit, cpsr, rn, operand2, rd); break;
-    case 1: eor(sBit, cpsr, rn, operand2, rd); break;
-    case 2: sub(sBit, cpsr, rn, operand2, rd); break;
-    case 3: rsb(sBit, cpsr, rn, operand2, rd); break;
-    case 4: add(sBit, cpsr, rn, operand2, rd); break;
-    case 8: tst(sBit, cpsr, rn, operand2); break;
-    case 9: teq(sBit, cpsr, rn, operand2); break;
-    case 10: cmp(sBit, cpsr, rn, operand2); break;
-    case 12: orr(sBit, cpsr, rn, operand2, rd); break;
-    case 13: mov(sBit, cpsr, rn, operand2, rd); break;
+    case AND: and(s_bit, cpsr, rn, operand2, rd); break;
+    case EOR: eor(s_bit, cpsr, rn, operand2, rd); break;
+    case SUB: sub(s_bit, cpsr, rn, operand2, rd); break;
+    case RSB: rsb(s_bit, cpsr, rn, operand2, rd); break;
+    case ADD: add(s_bit, cpsr, rn, operand2, rd); break;
+    case TST: tst(s_bit, cpsr, rn, operand2); break;
+    case TEQ: teq(s_bit, cpsr, rn, operand2); break;
+    case CMP: cmp(s_bit, cpsr, rn, operand2); break;
+    case ORR: orr(s_bit, cpsr, rn, operand2, rd); break;
+    case MOV: mov(s_bit, cpsr, rn, operand2, rd); break;
     default: printf("Invalid opcode: Operation not supported\n");
     }
   }
