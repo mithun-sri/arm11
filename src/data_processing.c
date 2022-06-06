@@ -166,7 +166,7 @@ void orr(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   }
 }
 
-void mov(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
+void mov(int sBit, uint32_t* cpsr, int operand2, uint32_t* rd) {
   *rd = operand2;
 
   if (sBit) {
@@ -240,7 +240,7 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     case 9: teq(sBit, cpsr, rn, operand2); break;
     case 10: cmp(sBit, cpsr, rn, operand2); break;
     case 12: orr(sBit, cpsr, rn, operand2, rd); break;
-    case 13: mov(sBit, cpsr, rn, operand2, rd); break;
+    case 13: mov(sBit, cpsr, operand2, rd); break;
     default: printf("Invalid opcode: Operation not supported\n");
     }
   }
