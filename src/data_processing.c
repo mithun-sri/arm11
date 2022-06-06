@@ -1,44 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "reg.c" // name of file that stores register info
+#include "data_processing.h"
 
-#define COND_OFFSET 28
-#define BIT_27_MASK 0x8000000
-#define BIT_27_OFFSET 27
-#define BIT_26_MASK 0x4000000
-#define BIT_26_OFFSET 26
-#define I_BIT_MASK 0x2000000
-#define I_BIT_OFFSET 25
-#define OPCODE_MASK 0x1e00000
-#define OPCODE_OFFSET 21
-#define S_BIT_MASK 0x100000
-#define S_BIT_OFFSET 20
-#define RN_MASK 0xf0000
-#define RN_OFFSET 16
-#define RD_MASK 0xf000
-#define RD_OFFSET 12
-#define OPERAND_2_MASK 0xfff
-#define OPERAND_2_IMMEDIATE_MASK 0xff
-#define ROTATE_OFFSET 8
-#define RM_MASK 0xf
-#define SHIFT_VALUE_MASK 0xff0
-#define SHIFT_OPTIONAL_BIT_MASK 0x10
-#define SHIFT_VALUE_OFFSET 4
-#define SHIFT_TYPE_MASK 0x6
-#define LAST_BIT_OFFSET 1
-#define SHIFT_AMOUNT_OFFSET 7
-#define LAST_BIT_MASK 0x1
-#define CPSR_N_OFFSET 31
-#define CPSR_Z_OFFSET 30
-#define CPSR_C_OFFSET 29
-#define CPSR_V_OFFSET 28
-#define Z_CLEAR 0xbfffffff
-#define C_CLEAR 0xdfffffff
-#define V_CLEAR 0xefffffff
-#define MOST_SIGNIFICANT 0x80000000
-
-// check update_c functions
-// update data types
+//check update_c functions
 
 void update_n(uint32_t* cpsr, int res) {
   if ((res & MOST_SIGNIFICANT) != 0) {
@@ -167,7 +131,7 @@ void orr(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   }
 }
 
-void mov(int sBit, uint32_t* cpsr, int operand2, uint32_t* rd) {
+void mov(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   *rd = operand2;
 
   if (sBit) {
@@ -177,7 +141,6 @@ void mov(int sBit, uint32_t* cpsr, int operand2, uint32_t* rd) {
 }
 
 void manage(uint32_t instruction, struct REGISTERS* r) {
-  int cond = instruction >> COND_OFFSET;
   int bit27 = (instruction & BIT_27_MASK) >> BIT_27_OFFSET;
   int bit26 = (instruction & BIT_26_MASK) >> BIT_26_OFFSET;
   int iBit = (instruction & I_BIT_MASK) >> I_BIT_OFFSET;
@@ -189,16 +152,11 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
   uint32_t *rd = &r->general[rdPos];
   uint16_t operand2 = (instruction & OPERAND_2_MASK);
   uint32_t *cpsr = &r->cpsr;
-  int n = r->cpsr >> CPSR_N_OFFSET;
-  int z = (r->cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
-  int c = (r->cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK;
-  int v = (r->cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
   
   if (iBit) {
     int rotate = 2 * (operand2 >> ROTATE_OFFSET);
     int constant = operand2 & OPERAND_2_IMMEDIATE_MASK;
     // operand2 = constant rotated right by rotate value
-
   } else {
     int rm = operand2 & RM_MASK;
     // represents bit no. 4 in shift
@@ -216,21 +174,7 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     }
   }
 
-  int flag;
-
-  switch(cond) {
-    case 0: flag = (z == 1); break;
-    case 1: flag = (z == 0); break;
-    case 10: flag = (n == v); break;
-    case 11: flag = (n != v); break;
-    case 12: flag = ((z == 0) && (n == v)); break;
-    case 13: flag = ((z == 1) || (n != v)); break;
-    case 14: flag = 1; break;
-    default: printf("Invalid condition: Check cond field\n");
-  }
-
-  // execute instruction iff cond succeeds
-  if (flag) {
+  if (succeeds(instruction, r)) {
     switch (opcode) {
     case 0: and(sBit, cpsr, rn, operand2, rd); break;
     case 1: eor(sBit, cpsr, rn, operand2, rd); break;
@@ -241,7 +185,7 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     case 9: teq(sBit, cpsr, rn, operand2); break;
     case 10: cmp(sBit, cpsr, rn, operand2); break;
     case 12: orr(sBit, cpsr, rn, operand2, rd); break;
-    case 13: mov(sBit, cpsr, operand2, rd); break;
+    case 13: mov(sBit, cpsr, rn, operand2, rd); break;
     default: printf("Invalid opcode: Operation not supported\n");
     }
   }

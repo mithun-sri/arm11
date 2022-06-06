@@ -3,9 +3,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "reg.c"
+#include "instruction.c"
 
-#define COND_OFFSET 28
 #define BIT_27_MASK 0x8000000
 #define BIT_27_OFFSET 27
 #define BIT_26_MASK 0x4000000
