@@ -37,7 +37,8 @@
 #define V_CLEAR 0xefffffff
 #define MOST_SIGNIFICANT 0x80000000
 
-//check update_c functions
+// check update_c functions
+// update data types
 
 void update_n(uint32_t* cpsr, int res) {
   if ((res & MOST_SIGNIFICANT) != 0) {
