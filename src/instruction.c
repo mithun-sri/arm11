@@ -8,7 +8,7 @@ int succeeds(uint32_t instruction, struct REGISTERS* r) {
   int z = (r->cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
   int c = (r->cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK;
   int v = (r->cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
-
+  
   int flag;
   
   switch(cond) {
