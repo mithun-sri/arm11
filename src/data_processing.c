@@ -21,7 +21,7 @@ void update_z(uint32_t* cpsr, int res) {
 }
 
 void update_c(uint32_t* cpsr, int flag) {
-  if (flag == 1) {
+  if (flag == 0) {
     *cpsr |= 1 << CPSR_C_OFFSET;
   } else {
     *cpsr &= C_CLEAR;
