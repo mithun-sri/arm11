@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "reg.c" // name of file that stores REGISTER struct
+#include "reg.c" // name of file that stores register info
 
 #define COND_OFFSET 28
 #define BIT_27_MASK 0x8000000
@@ -27,55 +27,152 @@
 #define SHIFT_TYPE_MASK 0x6
 #define LAST_BIT_OFFSET 1
 #define SHIFT_AMOUNT_OFFSET 7
-#define SHIFT_LAST_BIT_MASK 0x1
+#define LAST_BIT_MASK 0x1
+#define CPSR_N_OFFSET 31
+#define CPSR_Z_OFFSET 30
+#define CPSR_C_OFFSET 29
+#define CPSR_V_OFFSET 28
+#define Z_CLEAR 0xbfffffff
+#define C_CLEAR 0xdfffffff
+#define V_CLEAR 0xefffffff
+#define MOST_SIGNIFICANT 0x80000000
 
-// add functionality to update CPSR flags
-// add functionality to check cond succeeds
+//check update_c functions
 
-void and(int rn, int operand2, uint32_t* rd) {
+void update_n(uint32_t* cpsr, int res) {
+  if ((res & MOST_SIGNIFICANT) != 0) {
+    *cpsr |= 1 << CPSR_N_OFFSET;
+  } else {
+    *cpsr &= MOST_SIGNIFICANT;
+  }
+}
+
+void update_z(uint32_t* cpsr, int res) {
+  if (res == 0) {
+    *cpsr |= 1 << CPSR_Z_OFFSET;
+  } else {
+    *cpsr &= Z_CLEAR;
+  }
+}
+
+void update_c(uint32_t* cpsr, int flag) {
+  if (flag == 1) {
+    *cpsr |= 1 << CPSR_C_OFFSET;
+  } else {
+    *cpsr &= C_CLEAR;
+  }
+}
+
+void update_v(uint32_t* cpsr, int flag) {
+  if (flag == 1) {
+    *cpsr |= 1 << CPSR_V_OFFSET;
+  } else {
+    *cpsr &= V_CLEAR;
+  }
+}
+
+void and(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn & operand2;
   *rd = res;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+  }
 }
 
-void eor(int rn, int operand2, uint32_t* rd) {
+void eor(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn ^ operand2;
   *rd = res;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+  }
 }
 
-void sub(int rn, int operand2, uint32_t* rd) {
+void sub(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn - operand2;
+  int flag = (rn >= operand2);
   *rd = res;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+    update_c(cpsr, flag);
+  }
 }
 
-void rsb(int rn, int operand2, uint32_t* rd) {
+void rsb(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = operand2 - rn;
+  int flag = (operand2 >= rn);
   *rd = res;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+    update_c(cpsr, flag);
+  }
 }
 
-void add(int rn, int operand2, uint32_t* rd) {
+void add(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn + operand2;
+  int flag = (res < rn || res < operand2);
   *rd = res;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+    update_c(cpsr, flag);
+  }
 }
 
-void tst(int rn, int operand2) {
+void tst(int sBit, uint32_t* cpsr, int rn, int operand2) {
   int res = rn & operand2; 
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+  }
 }
 
-void teq(int rn, int operand2) {
+void teq(int sBit, uint32_t* cpsr, int rn, int operand2) {
   int res = rn ^ operand2;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+  }
 }
 
-void cmp(int rn, int operand2) {
+void cmp(int sBit, uint32_t* cpsr, int rn, int operand2) {
   int res = rn - operand2;
+  int flag = (rn >= operand2);
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+    update_c(cpsr, flag);
+  }
 }
 
-void orr(int rn, int operand2, uint32_t* rd) {
+void orr(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   int res = rn | operand2;
   *rd = res;
+
+  if (sBit) {
+    update_n(cpsr, res);
+    update_z(cpsr, res);
+  }
 }
 
-void mov(int rn, int operand2, uint32_t* rd) {
+void mov(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   *rd = operand2;
+
+  if (sBit) {
+    update_n(cpsr, operand2);
+    update_z(cpsr, operand2);
+  }
 }
 
 void manage(uint32_t instruction, struct REGISTERS* r) {
@@ -89,13 +186,18 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
   uint32_t rn = r->general[rnPos];
   int rdPos = (instruction & RD_MASK) >> RD_OFFSET;
   uint32_t *rd = &r->general[rdPos];
-  int operand2 = (instruction & OPERAND_2_MASK);
+  uint16_t operand2 = (instruction & OPERAND_2_MASK);
   uint32_t *cpsr = &r->cpsr;
+  int n = r->cpsr >> CPSR_N_OFFSET;
+  int z = (r->cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
+  int c = (r->cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK;
+  int v = (r->cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
   
   if (iBit) {
     int rotate = 2 * (operand2 >> ROTATE_OFFSET);
     int constant = operand2 & OPERAND_2_IMMEDIATE_MASK;
     // operand2 = constant rotated right by rotate value
+
   } else {
     int rm = operand2 & RM_MASK;
     // represents bit no. 4 in shift
@@ -105,7 +207,7 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     
     if (optionalBit) {
       int shiftRegister = shift >> LAST_BIT_OFFSET;
-      int lastBit = shift & SHIFT_LAST_BIT_MASK;
+      int lastBit = shift & LAST_BIT_MASK;
       // perform shift
     } else {
       int shiftAmount = shift >> SHIFT_AMOUNT_OFFSET;
@@ -113,17 +215,33 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     }
   }
 
-  switch (opcode) {
-    case 0: and(rn, operand2, rd); break;
-    case 1: eor(rn, operand2, rd); break;
-    case 2: sub(rn, operand2, rd); break;
-    case 3: rsb(rn, operand2, rd); break;
-    case 4: add(rn, operand2, rd); break;
-    case 8: tst(rn, operand2); break;
-    case 9: teq(rn, operand2); break;
-    case 10: cmp(rn, operand2); break;
-    case 12: orr(rn, operand2, rd); break;
-    case 13: mov(rn, operand2, rd); break;
-    default: printf("Invalid opcode: Operation not supported");
+  int flag;
+
+  switch(cond) {
+    case 0: flag = (z == 1); break;
+    case 1: flag = (z == 0); break;
+    case 10: flag = (n == v); break;
+    case 11: flag = (n != v); break;
+    case 12: flag = ((z == 0) && (n == v)); break;
+    case 13: flag = ((z == 1) || (n != v)); break;
+    case 14: flag = 1; break;
+    default: printf("Invalid condition: Check cond field\n");
+  }
+
+  // execute instruction iff cond succeeds
+  if (flag) {
+    switch (opcode) {
+    case 0: and(sBit, cpsr, rn, operand2, rd); break;
+    case 1: eor(sBit, cpsr, rn, operand2, rd); break;
+    case 2: sub(sBit, cpsr, rn, operand2, rd); break;
+    case 3: rsb(sBit, cpsr, rn, operand2, rd); break;
+    case 4: add(sBit, cpsr, rn, operand2, rd); break;
+    case 8: tst(sBit, cpsr, rn, operand2); break;
+    case 9: teq(sBit, cpsr, rn, operand2); break;
+    case 10: cmp(sBit, cpsr, rn, operand2); break;
+    case 12: orr(sBit, cpsr, rn, operand2, rd); break;
+    case 13: mov(sBit, cpsr, rn, operand2, rd); break;
+    default: printf("Invalid opcode: Operation not supported\n");
+    }
   }
 }
