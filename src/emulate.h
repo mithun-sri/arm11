@@ -5,6 +5,7 @@
 #define PC_INDEX 15
 #define CPSR_INDEX 16
 #define NUM_GEN_PURPOSE_REGISTERS 13
+#define BYTES_PER_WORD 4
 
 struct registers {
 	uint32_t *gen_regs[NUM_GEN_PURPOSE_REGISTERS];
