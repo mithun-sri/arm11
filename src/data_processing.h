@@ -3,7 +3,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "instruction.c"
+#include "instruction.h"
+#include "data_processing_utilities.h"
 
 #define COND_OFFSET 28
 #define BIT_27_MASK 0x8000000
