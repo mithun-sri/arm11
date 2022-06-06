@@ -140,6 +140,40 @@ void mov(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd) {
   }
 }
 
+Operand2 logical_left_shift(uint8_t shift_amount, uint32_t content) {
+	Operand2 res;
+	res.value = (uint32_t) (content << shift_amount);
+	res.carry = get_bit(1 << (REGISTER_BITS - shift_amount) & content); 
+
+	return res; 
+}
+
+Operand2 logical_right_shift(uint8_t shift_amount, uint32_t content) {
+	Operand2 res;
+	res.value = (uint32_t) (content >> shift_amount);
+	res.carry = get_bit(1 << shift_amount & content); 
+
+	return res; 
+}
+	
+Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content) {
+	Operand2 res = logical_right_shift(shift_amount, content);
+	uint8_t msb = get_bit(MOST_SIGNIFICANT & content);
+	for (int i=0; i<shift_amount; i++) {
+		res.value = res.value | msb << (MOST_SIGNIFICANT_OFFSET - i);	
+	}
+
+	return res;
+}
+
+Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
+	Operand2 res = logical_right_shift(shift_amount, content);
+	uint32_t mask = create_contigouous_mask(shift_amount);	
+	res.value = res.value & (mask & content) << (MOST_SIGNIFICANT_OFFSET - shift_amount); 
+	
+	return res;
+}
+
 void manage(uint32_t instruction, struct REGISTERS* r) {
   int bit27 = (instruction & BIT_27_MASK) >> BIT_27_OFFSET;
   int bit26 = (instruction & BIT_26_MASK) >> BIT_26_OFFSET;
