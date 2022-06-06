@@ -18,6 +18,14 @@ int main(int argc, char **argv) {
   *memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
   /* Load instructions into memory */
+  fseek(file, 0, SEEK_END);
+  uint32_t file_size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  for (uint32_t i = 0; i < file_size; i++){
+      
+  }
+
   fclose(file);
 
   /* Begin execution */
