@@ -1,3 +1,6 @@
+#ifndef DATA_PROCESSING_H
+#define DATA_PROCESSING_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include "reg.c"
@@ -36,3 +39,71 @@
 #define C_CLEAR 0xdfffffff
 #define V_CLEAR 0xefffffff
 #define MOST_SIGNIFICANT 0x80000000
+#define MOST_SIGNIFICANT_OFFSET 31
+#define REGISTER_BITS 32
+#define REG_MAX_VALUE (0x100000000 - 1)
+
+typedef enum {
+	AND = 0,
+	EOR = 1,
+	SUB = 2,
+	RSB = 3,
+	ADD = 4,
+	TST = 8,
+	TEQ = 9,
+	CMP = 10,
+	ORR = 12,
+	MOV = 13
+} Opcode;
+
+typedef enum {
+	LSL = 0,
+	LSR = 1,
+	ASR = 2,
+	ROR = 3
+} Shift;
+
+typedef struct {
+	uint8_t carry;
+	uint32_t value;
+} Operand2;
+
+void update_n(uint32_t* cpsr, int res);
+
+void update_z(uint32_t* cpsr, int res);
+
+void update_c(uint32_t* cpsr, int flag);
+
+void update_v(uint32_t* cpsr, int flag);
+
+void and(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+
+void eor(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+
+void sub(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+
+void rsb(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+
+void add(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+
+void tst(int sBit, uint32_t* cpsr, int rn, int operand2);
+
+void teq(int sBit, uint32_t* cpsr, int rn, int operand2);
+
+void cmp(int sBit, uint32_t* cpsr, int rn, int operand2);
+
+void orr(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+
+void mov(int sBit, uint32_t* cpsr, int operand2, uint32_t* rd);
+
+Operand2 logical_left_shift(uint8_t, uint32_t);
+
+Operand2 logical_right_shift(uint8_t, uint32_t);
+
+Operand2 arithmetic_right_shift(uint8_t, uint32_t);
+
+Operand2 rotate_right(uint8_t, uint32_t);
+
+void manage(uint32_t instruction, struct REGISTERS* r)
+
+#endif
