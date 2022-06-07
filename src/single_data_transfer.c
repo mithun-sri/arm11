@@ -35,7 +35,12 @@ void register_write(uint32_t *dest, uint32_t value){
 
 /* Write from register to memory */
 void memory_write(uint8_t *location, uint32_t value){
-    
+    uint8_t *ptr = location;
+    for (int i = 0; i < BYTES_PER_WORD; i++){
+        uint32_t MASK = 2^((i + 1) * 8) - 1;
+        *ptr = (value & MASK) >> (i * 8);
+        ptr++;
+    }
 }
 
 uint32_t compute_address(uint32_t value, uint32_t offset, int up_bit){
