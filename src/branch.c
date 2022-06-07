@@ -18,4 +18,5 @@ if (succeeds(instruction, r) == 1) {  // checks if conditions are met for the in
 
   uint32_t branched_instr_addr = r.pc + offset;
   registers.pc = branched_instr_addr;
+}
     
