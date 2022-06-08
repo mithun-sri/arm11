@@ -2,7 +2,7 @@
 
 #include "multiply.h"
 
-void multiply(uint32_t instruction) {
+void multiply(uint32_t instruction, struct registers r) {
 
   if (succeeds(instruction, r) == 1) {
   
