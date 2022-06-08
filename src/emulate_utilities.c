@@ -18,12 +18,12 @@ void manage(uint32_t instruction, struct registers* r) {
         uint8_t content = operand2 & OPERAND_2_IMMEDIATE_MASK;
         operand2 = rotate_right(rotate, content);
     } else {
-        uint8_t* rmPtr = operand2 & RM_MASK;
+        uint8_t* rm_ptr = operand2 & RM_MASK;
         // represents bit no. 4 in shift
         uint8_t optional_bit = (operand2 >> SHIFT_VALUE_OFFSET) & LAST_BIT_MASK;
         Shift shift_type = (operand2 >> SHIFT_TYPE_OFFSET) & LAST_TWO_BITS_MASK;
         uint8_t shift_amount;
-        Operand2 new_operand2_with_carry = logical_left_shift(shift_amount, &rmPtr);
+        Operand2 new_operand2_with_carry = logical_left_shift(shift_amount, &rm_ptr);
 
         if (optional_bit) {
             uint8_t *shift_register = operand2 >> RS_OFFSET;
