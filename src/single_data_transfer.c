@@ -24,14 +24,13 @@ int single_data_transfer(uint32_t instruction, struct REGISTERS* r, uint8_t *mem
 	int rd_location = extract_bits(instruction, 12, 16);
 	uint32_t *rd = &r-> gen_regs[rd_locationn];
 	uint16_t offset = extract_bits(instruction, 0, 12);
-	uint32_t *cpsr = &r->cpsr;
 
     /* Check pre/post indexing */
     if (p_bit == 1){
         /* Pre-indexing */
         uint32_t new_address = compute_address(rn, offset, up_bit);
         perform_transfer(l_bit , new_address, rd);
-    } else if (index_bit == 0){
+    } else if (p_bit == 0){
         /* Post-indexing */
         perform_transfer(l_bit, rn, rd);
         uint32_t new_address = compute_address(rn, offset, up_bit);
