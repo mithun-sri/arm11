@@ -175,14 +175,14 @@ Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
 }
 
 void manage(uint32_t instruction, struct REGISTERS* r) {
-    uint8_t bit27 = (instruction & BIT_27_MASK) >> BIT_27_OFFSET;
-    uint8_t bit26 = (instruction & BIT_26_MASK) >> BIT_26_OFFSET;
-    uint8_t i_bit = (instruction & I_BIT_MASK) >> I_BIT_OFFSET;
-    Opcode opcode = (instruction & OPCODE_MASK) >> OPCODE_OFFSET;
-    uint8_t s_bit = (instruction & S_BIT_MASK) >> S_BIT_OFFSET;
-    uint8_t rn_pos = (instruction & RN_MASK) >> RN_OFFSET;
+    uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
+    uint8_t bit26 = (instruction >> BIT_26_OFFSET) & LAST_BIT_MASK;
+    uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
+    Opcode opcode = (instruction >> OPCODE_OFFSET) & LAST_FOUR_BITS_MASK;
+    uint8_t s_bit = (instruction >> S_BIT_OFFSET) & LAST_BIT_MASK;
+    uint8_t rn_pos = (instruction >> RN_OFFSET) & LAST_FOUR_BITS_MASK;
     uint32_t rn = r->general[rn_pos];
-    uint8_t rd_pos = (instruction & RD_MASK) >> RD_OFFSET;
+    uint8_t rd_pos = (instruction >> RD_OFFSET) & LAST_FOUR_BITS_MASK;
     uint8_t *rd = &r->general[rd_pos];
     uint32_t operand2 = (instruction & OPERAND_2_MASK);
     uint32_t *cpsr = &r->cpsr;
@@ -194,9 +194,8 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     } else {
         uint8_t* rmPtr = operand2 & RM_MASK;
         // represents bit no. 4 in shift
-        uint8_t optional_bit = (operand2 & SHIFT_OPTIONAL_BIT_MASK) >> SHIFT_VALUE_OFFSET;
-        uint8_t shift = (operand2 & SHIFT_VALUE_MASK) >> SHIFT_VALUE_OFFSET;
-        uint8_t shift_type = (shift & SHIFT_TYPE_MASK) >> LAST_BIT_OFFSET;
+        uint8_t optional_bit = (operand2 >> SHIFT_VALUE_OFFSET) & LAST_BIT_MASK;
+        Shift shift_type = (operand2 >> SHIFT_TYPE_OFFSET) & LAST_TWO_BITS_MASK;
         uint8_t shift_amount;
 
         if (optional_bit) {
@@ -207,10 +206,10 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
         }
 
         switch(shift_type) {
-            case 0: logical_left_shift(shift_amount, &rmPtr); break;
-            case 1: logical_right_shift(shift_amount, &rmPtr); break;
-            case 2: arithmetic_right_shift(shift_amount, &rmPtr); break;
-            case 3: rotate_right(shift_amount, &rmPtr); break;
+            case LSL: logical_left_shift(shift_amount, &rmPtr); break;
+            case LSR: logical_right_shift(shift_amount, &rmPtr); break;
+            case ASR: arithmetic_right_shift(shift_amount, &rmPtr); break;
+            case ROR: rotate_right(shift_amount, &rmPtr); break;
             default: printf("shift_type error\n");
         }
     }
