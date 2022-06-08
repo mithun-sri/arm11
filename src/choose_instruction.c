@@ -34,23 +34,23 @@ void run_emulator(struct registers regs) {
       uint8_t bit_4_7 = (instruction >> 4) & ((1 << 3));
 
       if (bit_27 == 1) {
-	branch(instruction);
-	pipe.decode_set = 0;
-	pipe.fetch_set = 0;
+	      branch(instruction, regs);
+	      pipe.decode_set = 0;
+	      pipe.fetch_set = 0;
       }
 
       if (bit_26 == 1) {
-	single_data_transfer(instruction);
+	      single_data_transfer(instruction, regs);
       }
 
       else {
-	if (bit_22_27 == 0 && bit_4_7 == 9) {
-	  multiply(instruction);
-	}
+	      if (bit_22_27 == 0 && bit_4_7 == 9) {
+	        multiply(instruction, regs);
+	      }
   
-	else {
-	  data_processing(instruction);
-	}
+	      else {
+	        data_processing(instruction, regs);
+	      }
       }
     }
   }
