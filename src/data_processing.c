@@ -206,10 +206,10 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
         }
 
         switch(shift_type) {
-            case LSL: logical_left_shift(shift_amount, &rmPtr); break;
-            case LSR: logical_right_shift(shift_amount, &rmPtr); break;
-            case ASR: arithmetic_right_shift(shift_amount, &rmPtr); break;
-            case ROR: rotate_right(shift_amount, &rmPtr); break;
+            case LSL: logical_left_shift(shift_amount, &rm_ptr); break;
+            case LSR: logical_right_shift(shift_amount, &rm_ptr); break;
+            case ASR: arithmetic_right_shift(shift_amount, &rm_ptr); break;
+            case ROR: rotate_right(shift_amount, &rm_ptr); break;
             default: printf("shift_type error\n");
         }
     }
