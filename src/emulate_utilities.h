@@ -26,6 +26,6 @@ uint32_t create_contiguous_mask(uint8_t num_bits);
 
 int succeeds(uint32_t instruction, struct REGISTERS* r);
 
-
+int extract_bits(uint32_t instr, uint32_t start, uint32_t end);
 
 #endif

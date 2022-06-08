@@ -1,14 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include "emulate.h"
 #include "single_data_transfer.h"
-#include <math.h>
-#include "instruction.c"
-
-int extract_bits(uint32_t instr, uint32_t start, uint32_t end){
-	uint32_t MASK = pow(2, end) - 1;
-	return (instr & MASK) >> begin;
-}
 
 int single_data_transfer(uint32_t instruction, struct REGISTERS* r, uint8_t *memory){
 
