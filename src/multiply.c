@@ -23,7 +23,7 @@ void multiply(uint32_t instruction) {
       result = Rm * Rs;
     }
 
-    r.general[register_to_write_to] = result;
+    r.general_regs[register_to_write_to] = result;
 
 
     if (set_conditions == 1) {
