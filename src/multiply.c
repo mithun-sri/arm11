@@ -1,12 +1,6 @@
 // if the current instruction, currentInstruction is a multiply, then the following code would be run.
 
-#include <stdint.h>
-
-#include "reg.c"
-#include "instruction.c"
-
-#define Z_MASK_CPSR 1073741824  // 0100...00 in 32 bit binary
-#define N_MASK_CPSR 2147483648  // 1000...00 in 32 bit binary
+#include <multiply.h>
 
 void multiply(uint32_t instruction) {
 
