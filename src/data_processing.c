@@ -83,8 +83,8 @@ void add(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
     // for overflow either two numbers have MSB == 1 or one number has 1 and 
     // other has 0 and there is a previous carry producing a 0 as the MSB for the result
     uint8_t flag = (extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 1) 
-    || (extract_bits(rn, 31, 32) == 0) && (extract_bits(operand2, 31, 32) == 1 && (extract_bits(res, 31, 32) == 0)) 
-    || (extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 0 && (extract_bits(res, 31, 32) == 0));
+    || (extract_bits(rn, 31, 32) == 0) && extract_bits(operand2, 31, 32) == 1 && (extract_bits(res, 31, 32) == 0)
+    || (extract_bits(rn, 31, 32) == 1) && extract_bits(operand2, 31, 32) == 0 && (extract_bits(res, 31, 32) == 0);
     
     *rd = res;
 
