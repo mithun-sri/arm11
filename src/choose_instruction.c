@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-struct data_pipeline {
-  uint32_t fetched;
-  uint32_t decoded;
-  uint8_t fetch_set;
-  uint8_t decode_set;
-  uint8_t instr_set;
-};
+#include "choose_instruction.h"
 
 void run_emulator(struct registers regs) {
 
@@ -35,10 +26,10 @@ void run_emulator(struct registers regs) {
 
     if (pipe.instr_set) {
 
-      uint4_t bit_27 = (instruction >> 27) & 1;
-      uint4_t bit_26 = (instruction >> 26) & 1;
+      uint8_t bit_27 = (instruction >> 27) & 1;
+      uint8_t bit_26 = (instruction >> 26) & 1;
       uint8_t bit_22_27 = (instruction >> 22) & ((1 << 5));
-      uint4_t bit_4_7 = (instruction >> 4) & ((1 << 3));
+      uint8_t bit_4_7 = (instruction >> 4) & ((1 << 3));
 
       if (bit_27 == 1) {
 	branch(instruction);
