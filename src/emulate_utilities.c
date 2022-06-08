@@ -37,15 +37,15 @@ void manage(uint32_t instruction, struct registers* r) {
               operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry); break;
               update_c(cpsr, new_operand2_with_carry.carry);
             case LSR: 
-              operand2 = logical_right_shift(shift_amount, &rmPtr).value; 
+              operand2 = logical_right_shift(shift_amount, &rm_ptr).value; 
               update_c(cpsr, new_operand2_with_carry.carry);
               break;
             case ASR: 
-              operand2 = arithmetic_right_shift(shift_amount, &rmPtr).value; 
+              operand2 = arithmetic_right_shift(shift_amount, &rm_ptr).value; 
               update_c(cpsr, new_operand2_with_carry.carry);
               break;
             case ROR: 
-              operand2 = rotate_right(shift_amount, &rmPtr).value; 
+              operand2 = rotate_right(shift_amount, &rm_ptr).value; 
               update_c(cpsr, new_operand2_with_carry.carry);
               break;
             default: printf("shift_type error\n");
