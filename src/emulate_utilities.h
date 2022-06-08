@@ -18,4 +18,14 @@ typedef enum {
     AL = 14
 } CondCode;
 
+void manage(uint32_t instruction, struct registers* r);
+
+uint8_t get_bit(uint32_t content);
+
+uint32_t create_contiguous_mask(uint8_t num_bits);
+
+int succeeds(uint32_t instruction, struct REGISTERS* r);
+
+
+
 #endif
