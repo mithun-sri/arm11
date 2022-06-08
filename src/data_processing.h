@@ -33,6 +33,7 @@
 #define MOST_SIGNIFICANT 0x80000000
 #define MOST_SIGNIFICANT_OFFSET 31
 #define REGISTER_BITS 32
+#define LAST_BYTE_MASK 0xff
 
 typedef enum {
 	AND = 0,
