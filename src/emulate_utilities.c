@@ -2,55 +2,74 @@
 #include <stdlib.h>
 
 void manage(uint32_t instruction, struct REGISTERS* r) {
-  int bit27 = (instruction & BIT_27_MASK) >> BIT_27_OFFSET;
-  int bit26 = (instruction & BIT_26_MASK) >> BIT_26_OFFSET;
-  int i_bit = (instruction & I_BIT_MASK) >> I_BIT_OFFSET;
-  Opcode opcode = (instruction & OPCODE_MASK) >> OPCODE_OFFSET;
-  int s_bit = (instruction & S_BIT_MASK) >> S_BIT_OFFSET;
-  int rn_pos = (instruction & RN_MASK) >> RN_OFFSET;
-  uint32_t rn = r->general[rn_pos];
-  int rd_pos = (instruction & RD_MASK) >> RD_OFFSET;
-  uint32_t *rd = &r->general[rd_pos];
-  uint16_t operand2 = (instruction & OPERAND_2_MASK);
-  uint32_t *cpsr = &r->cpsr;
+    uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
+    uint8_t bit26 = (instruction >> BIT_26_OFFSET) & LAST_BIT_MASK;
+    uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
+    Opcode opcode = (instruction >> OPCODE_OFFSET) & LAST_FOUR_BITS_MASK;
+    uint8_t s_bit = (instruction >> S_BIT_OFFSET) & LAST_BIT_MASK;
+    uint8_t rn_pos = (instruction >> RN_OFFSET) & LAST_FOUR_BITS_MASK;
+    uint32_t rn = r->general[rn_pos];
+    uint8_t rd_pos = (instruction >> RD_OFFSET) & LAST_FOUR_BITS_MASK;
+    uint8_t *rd = &r->general[rd_pos];
+    uint32_t operand2 = (instruction & OPERAND_2_MASK);
+    uint32_t *cpsr = &r->cpsr;
   
-  if (i_bit) {
-    int rotate = 2 * (operand2 >> ROTATE_OFFSET);
-    int constant = operand2 & OPERAND_2_IMMEDIATE_MASK;
-    // operand2 = constant rotated right by rotate value
-  } else {
-    int rm = operand2 & RM_MASK;
-    // represents bit no. 4 in shift
-    int optional_bit = (operand2 & SHIFT_OPTIONAL_BIT_MASK) >> SHIFT_VALUE_OFFSET;
-    int shift = (operand2 & SHIFT_VALUE_MASK) >> SHIFT_VALUE_OFFSET;
-    int shift_type = (shift & SHIFT_TYPE_MASK) >> LAST_BIT_OFFSET;
-    
-    if (optional_bit) {
-      int shift_register = shift >> LAST_BIT_OFFSET;
-      int last_bit = shift & LAST_BIT_MASK;
-      // perform shift
+    if (i_bit) {
+        uint8_t rotate = 2 * (operand2 >> ROTATE_OFFSET);
+        uint8_t content = operand2 & OPERAND_2_IMMEDIATE_MASK;
+        operand2 = rotate_right(rotate, content);
     } else {
-      int shift_amount = shift >> SHIFT_AMOUNT_OFFSET;
-      // perform shift
-    }
-  }
+        uint8_t* rmPtr = operand2 & RM_MASK;
+        // represents bit no. 4 in shift
+        uint8_t optional_bit = (operand2 >> SHIFT_VALUE_OFFSET) & LAST_BIT_MASK;
+        Shift shift_type = (operand2 >> SHIFT_TYPE_OFFSET) & LAST_TWO_BITS_MASK;
+        uint8_t shift_amount;
+        Operand2 new_operand2_with_carry = logical_left_shift(shift_amount, &rmPtr);
 
-  if (succeeds(instruction, r)) {
-    switch (opcode) {
-    case AND: and(s_bit, cpsr, rn, operand2, rd); break;
-    case EOR: eor(s_bit, cpsr, rn, operand2, rd); break;
-    case SUB: sub(s_bit, cpsr, rn, operand2, rd); break;
-    case RSB: rsb(s_bit, cpsr, rn, operand2, rd); break;
-    case ADD: add(s_bit, cpsr, rn, operand2, rd); break;
-    case TST: tst(s_bit, cpsr, rn, operand2); break;
-    case TEQ: teq(s_bit, cpsr, rn, operand2); break;
-    case CMP: cmp(s_bit, cpsr, rn, operand2); break;
-    case ORR: orr(s_bit, cpsr, rn, operand2, rd); break;
-    case MOV: mov(s_bit, cpsr, rn, operand2, rd); break;
-    default: printf("Invalid opcode: Operation not supported\n");
+        if (optional_bit) {
+            uint8_t *shift_register = operand2 >> RS_OFFSET;
+            shift_amount = &shift_register & LAST_BYTE_MASK;
+        } else {
+            shift_amount = operand2 >> SHIFT_AMOUNT_OFFSET;
+        }
+
+        switch(shift_type) {
+            case LSL: 
+              operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry); break;
+              update_c(cpsr, new_operand2_with_carry.carry);
+            case LSR: 
+              operand2 = logical_right_shift(shift_amount, &rmPtr).value; 
+              update_c(cpsr, new_operand2_with_carry.carry);
+              break;
+            case ASR: 
+              operand2 = arithmetic_right_shift(shift_amount, &rmPtr).value; 
+              update_c(cpsr, new_operand2_with_carry.carry);
+              break;
+            case ROR: 
+              operand2 = rotate_right(shift_amount, &rmPtr).value; 
+              update_c(cpsr, new_operand2_with_carry.carry);
+              break;
+            default: printf("shift_type error\n");
+        }
     }
-  }
+
+    if (succeeds(instruction, r)) {
+        switch (opcode) {
+        case AND: and(s_bit, cpsr, rn, operand2, rd); break;
+        case EOR: eor(s_bit, cpsr, rn, operand2, rd); break;
+        case SUB: sub(s_bit, cpsr, rn, operand2, rd); break;
+        case RSB: rsb(s_bit, cpsr, rn, operand2, rd); break;
+        case ADD: add(s_bit, cpsr, rn, operand2, rd); break;
+        case TST: tst(s_bit, cpsr, rn, operand2); break;
+        case TEQ: teq(s_bit, cpsr, rn, operand2); break;
+        case CMP: cmp(s_bit, cpsr, rn, operand2); break;
+        case ORR: orr(s_bit, cpsr, rn, operand2, rd); break;
+        case MOV: mov(s_bit, cpsr, rn, operand2, rd); break;
+        default: printf("Invalid opcode: Operation not supported\n");
+        }
+    }
 }
+
 
 
 
