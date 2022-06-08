@@ -2,8 +2,6 @@
 #include <stdint.h>
 #include "data_processing.h"
 
-//check update_c functions
-
 void update_n(uint32_t* cpsr, uint32_t res) {
     if ((res & MOST_SIGNIFICANT) != 0) {
         *cpsr |= 1 << CPSR_N_OFFSET;
@@ -58,7 +56,7 @@ void eor(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
 
 void sub(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd) {
     uint32_t res = rn - operand2;
-    uint8_t flag = (rn >= operand2);
+    uint8_t flag = (rn < operand2);
     *rd = res;
 
     if (s_bit) {
@@ -70,7 +68,7 @@ void sub(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
 
 void rsb(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd) {
     uint32_t res = operand2 - rn;
-    uint8_t flag = (operand2 >= rn);
+    uint8_t flag = (operand2 < rn);
     *rd = res;
 
     if (s_bit) {
@@ -82,7 +80,12 @@ void rsb(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
 
 void add(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd) {
     uint32_t res = rn + operand2;
-    uint8_t flag = (res < rn || res < operand2);
+    // for overflow either two numbers have MSB == 1 or one number has 1 and 
+    // other has 0 and there is a previous carry producing a 0 as the MSB for the result
+    uint8_t flag = (extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 1) 
+    || (extract_bits(rn, 31, 32) == 0) && (extract_bits(operand2, 31, 32) == 1 && (extract_bits(res, 31, 32) == 0)) 
+    || (extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 0 && (extract_bits(res, 31, 32) == 0));
+    
     *rd = res;
 
     if (s_bit) {
@@ -112,7 +115,7 @@ void teq(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2) {
 
 void cmp(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2) {
     uint32_t res = rn - operand2;
-    uint8_t flag = (rn >= operand2);
+    uint8_t flag = (rn < operand2);
 
     if (s_bit) {
         update_n(cpsr, res);
@@ -208,9 +211,8 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
 
         switch(shift_type) {
             case LSL: 
-              operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry);
+              operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry); break;
               update_c(cpsr, new_operand2_with_carry.carry);
-              break;
             case LSR: 
               operand2 = logical_right_shift(shift_amount, &rmPtr).value; 
               update_c(cpsr, new_operand2_with_carry.carry);
