@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "emulate_utilities.h"
+#include "data_processing.h"
 
-void manage(uint32_t instruction, struct REGISTERS* r) {
+void manage(uint32_t instruction, struct registers* r) {
     uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
     uint8_t bit26 = (instruction >> BIT_26_OFFSET) & LAST_BIT_MASK;
     uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
@@ -70,7 +72,28 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
     }
 }
 
+int succeeds(uint32_t instruction, struct REGISTERS* r) {
+  int cond = instruction >> COND_OFFSET;
+  int n = r->cpsr >> CPSR_N_OFFSET;
+  int z = (r->cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
+  int c = (r->cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK;
+  int v = (r->cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
+  
+  int flag;
+  
+  switch(cond) {
+    case EQ: flag = (z == 1); break;
+    case NE: flag = (z == 0); break;
+    case GE: flag = (n == v); break;
+    case LT: flag = (n != v); break;
+    case GT: flag = ((z == 0) && (n == v)); break;
+    case LE: flag = ((z == 1) || (n != v)); break;
+    case AL: flag = 1; break;
+    default: printf("Conditional Failure\n");
+  }
 
+  return flag;
+}
 
 
 
