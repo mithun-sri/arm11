@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "emulate_utilities.h"
-#include "data_processing.h"
 
 void manage(uint32_t instruction, struct registers* r) {
     uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
