@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "emulate.h"
-#include 
 #include "emulate_utilities.h"
 
 int single_data_transfer(uint32_t instruction, struct REGISTERS* r, uint8_t *memory);
