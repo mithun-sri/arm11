@@ -1,3 +1,5 @@
+#ifndef MULTIPLY_H
+#define MULTIPLY_H
 #include <stdint.h>
 #include "emulate_utilities.h"
 
@@ -5,3 +7,5 @@
 #define N_MASK_CPSR 2147483648  // 1000...00 in 32 bit binary
 
 void multiply(uint32_t instruction, struct *registers r);
+
+#endif
