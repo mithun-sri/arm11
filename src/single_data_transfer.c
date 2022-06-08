@@ -1,10 +1,33 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "emulate.h"
+#include "single_data_transfer.h"
+#include <math.h>
+#include "instruction.c"
 
-int single_data_transfer(int l_bit, int offset_bit, int index_bit, int up_bit, uint32_t rn, uint32_t offset, uint32_t rd){
+int extract_bits(uint32_t instr, uint32_t start, uint32_t end){
+	uint32_t MASK = pow(2, end) - 1;
+	return (instr & MASK) >> begin;
+}
+
+int single_data_transfer(uint32_t instruction, struct REGISTERS* r, uint8_t *memory){
+
+	if (suceeds(instruction, r) != 1){
+		exit(EXIT_FAILURE);
+	}
+	int i_bit = extract_bits(instruction, 25, 26);
+	int l_bit = extract_bits(instruction, 20, 21);
+	int p_bit = extract_bits(instruction, 24, 25);
+	int up_bit = extract_bits(instruction, 23, 24);
+	int rn_location = extract_bits(instruction, 16, 20);
+	uint32_t rn = r->gen_regs[rn_location];
+	int rd_location = extract_bits(instruction, 12, 16);
+	uint32_t *rd = &r-> gen_regs[rd_locationn];
+	uint16_t offset = extract_bits(instruction, 0, 12);
+	uint32_t *cpsr = &r->cpsr;
+
     /* Check pre/post indexing */
-    if (index_bit == 1){
+    if (p_bit == 1){
         /* Pre-indexing */
         uint32_t new_address = compute_address(rn, offset, up_bit);
         perform_transfer(l_bit , new_address, rd);
