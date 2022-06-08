@@ -1,6 +1,6 @@
 #include "branch.h"
 
-void branch(uint32_t instruction) {
+void branch(uint32_t instruction, struct registers regs) {
 
   if (succeeds(instruction, regs) == 1) {  // checks if conditions are met for the instruction based                                         on the contents of the register file, r.
     uint32_t mask = ((1 << 24) - 1);
