@@ -6,7 +6,7 @@
 #include "instruction.h"
 #include "data_processing_utilities.h"
 
-#define COND_OFFSET 28
+#define LAST_FOUR_BITS_MASK 0xf
 #define BIT_27_OFFSET 27
 #define BIT_26_OFFSET 26
 #define I_BIT_OFFSET 25
@@ -17,11 +17,12 @@
 #define OPERAND_2_MASK 0xfff
 #define OPERAND_2_IMMEDIATE_MASK 0xff
 #define ROTATE_OFFSET 8
-#define SHIFT_OPTIONAL_BIT_MASK 0x10
 #define SHIFT_VALUE_OFFSET 4
 #define RS_OFFSET 8
 #define SHIFT_AMOUNT_OFFSET 7
+#define SHIFT_TYPE_OFFSET 5
 #define LAST_BIT_MASK 0x1
+#define LAST_TWO_BITS_MASK 0x3
 #define CPSR_N_OFFSET 31
 #define CPSR_Z_OFFSET 30
 #define CPSR_C_OFFSET 29
