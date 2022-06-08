@@ -4,8 +4,8 @@
 #define BYTES_PER_WORD 4
 
 int main(int argc, char **argv) {
-  FILE *file;
-  if ((file = fopen(argv[1], "rb")) == NULL){
+  FILE *fPtr;
+  if ((fPtr = fopen(argv[1], "rb")) == NULL){
     perror("Error opening file");
     exit(EXIT_FAILURE);
   }
@@ -15,19 +15,17 @@ int main(int argc, char **argv) {
   *regs.gen_regs = calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t));
   regs.cpsr = 0;
   regs.pc = 0;
-  *memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
+  uint8_t *memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
   /* Load instructions into memory */
-  fseek(file, 0, SEEK_END);
-  uint32_t file_size = ftell(file);
-  fseek(file, 0, SEEK_SET);
+    fseek(fPtr, 0, SEEK_SET);
+    uint8_t *memory = calloc(MAX_SPACE, sizeof(uint8_t));
+    size_t file_size = fread(memory, MAX_SPACE, 1, fPtr) / BYTES_PER_WORD;
+    fclose(fPtr); 
 
   for (uint32_t i = 0; i < file_size; i++){
-      
   }
 
-  fclose(file);
-
   /* Begin execution */
-  return EXIT_SUCCESS;
+  exit(EXIT_SUCCESS)
 }
