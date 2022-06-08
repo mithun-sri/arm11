@@ -197,6 +197,7 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
         uint8_t optional_bit = (operand2 >> SHIFT_VALUE_OFFSET) & LAST_BIT_MASK;
         Shift shift_type = (operand2 >> SHIFT_TYPE_OFFSET) & LAST_TWO_BITS_MASK;
         uint8_t shift_amount;
+        Operand2 new_operand2_with_carry = logical_left_shift(shift_amount, &rmPtr);
 
         if (optional_bit) {
             uint8_t *shift_register = operand2 >> RS_OFFSET;
@@ -206,10 +207,21 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
         }
 
         switch(shift_type) {
-            case LSL: operand2 = logical_left_shift(shift_amount, &rmPtr).value; break;
-            case LSR: operand2 = logical_right_shift(shift_amount, &rmPtr).value; break;
-            case ASR: operand2 = arithmetic_right_shift(shift_amount, &rmPtr).value; break;
-            case ROR: operand2 = rotate_right(shift_amount, &rmPtr).value; break;
+            case LSL: 
+              operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry); break;
+              update_c(cpsr, new_operand2_with_carry.carry);
+            case LSR: 
+              operand2 = logical_right_shift(shift_amount, &rmPtr).value; 
+              update_c(cpsr, new_operand2_with_carry.carry);
+              break;
+            case ASR: 
+              operand2 = arithmetic_right_shift(shift_amount, &rmPtr).value; 
+              update_c(cpsr, new_operand2_with_carry.carry);
+              break;
+            case ROR: 
+              operand2 = rotate_right(shift_amount, &rmPtr).value; 
+              update_c(cpsr, new_operand2_with_carry.carry);
+              break;
             default: printf("shift_type error\n");
         }
     }
