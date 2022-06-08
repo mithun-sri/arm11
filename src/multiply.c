@@ -8,7 +8,9 @@
 #define Z_MASK_CPSR 1073741824  // 0100...00 in 32 bit binary
 #define N_MASK_CPSR 2147483648  // 1000...00 in 32 bit binary
 
-if (succeeds(instruction, r) == 1) {
+void multiply(uint32_t instruction) {
+
+  if (succeeds(instruction, r) == 1) {
   
   uint32_t accumulate = (instruction >> 21) & 1;
   uint32_t set_conditions = (instructions >> 20) & 1;
@@ -38,7 +40,12 @@ if (succeeds(instruction, r) == 1) {
   }
   }
 
+ }
+
 }
+
+
+
   
     
   
