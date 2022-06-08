@@ -1,7 +1,6 @@
 #include "single_data_transfer.h"
 
 int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *memory){
-
 	if (suceeds(instruction, r) != 1){
 		exit(EXIT_FAILURE);
 	}
@@ -13,7 +12,8 @@ int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *mem
 	uint32_t rn = r->gen_regs[rn_location];
 	int rd_location = extract_bits(instruction, 12, 16);
 	uint32_t *rd = &r-> gen_regs[rd_locationn];
-	uint16_t offset = extract_bits(instruction, 0, 12);
+	uint16_t offset_bits = extract_bits(instruction, 0, 12);
+    uint32_t offset = manage(instruction, r);
 
     /* Check pre/post indexing */
     if (p_bit == 1){

@@ -52,7 +52,8 @@ void manage(uint32_t instruction, struct registers* r) {
         }
     }
 
-    if (succeeds(instruction, r)) {
+    int check_opcode(){
+      if (succeeds(instruction, r)) {
         switch (opcode) {
         case AND: and(s_bit, cpsr, rn, operand2, rd); break;
         case EOR: eor(s_bit, cpsr, rn, operand2, rd); break;
