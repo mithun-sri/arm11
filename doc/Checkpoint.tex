@@ -1,9 +1,12 @@
 \documentclass[11pt]{article}
 
 \usepackage{fullpage}
+\usepackage{etoolbox}
+
+\AtBeginEnvironment{quote}{\itshape}
 
 \begin{document}
-\title{ARM Checkpoint}
+\title{ARM11 Checkpoint}
 \author{Mithun Sri, Shewta Banerjee, Devin Fernando, Taeho Kim}
 
 \maketitle
@@ -11,17 +14,44 @@
 \section{Group Organisation}
 
 
-\quad On the 30th of May, our group had our initial meeting to discuss how to split up the work. We decided that it would be best for each individual to work on one or two instructions so Mithun was assigned the {\bf Single Data Transfer Instrution}; {\bf Branch / Multiply Instruction}, was to be completed by Devin; Shewta and Taeho, were responsible for the {\bf Data Processing Instruction}. This was to ensure everyone had a fair amount of workload. 
+\-\hspace{1cm}On the 30th of May, our group had an initial offline meeting to discuss how to split up the work. We decided that it would be best for each individual to work on one or two instructions so Mithun was assigned the {\bf Single Data Transfer Instrution}; {\bf Branch / Multiply Instruction} was given to Devin; Shewta and Taeho, responsible for the {\bf Data Processing Instruction}. This was to ensure everyone had fair amount of workload. \\
+\-\hspace{1cm}We then discussed the data types that would be best suitable for registers, memory, instructions, etc. \\
+\-\hspace{1cm}After completing the work we were assigned, we met again offline to put out implementation together.
+\-\hspace{1cm}Our group is having regular meetings via Teams, constantly checking our individual progress to ensure that no one is falling behind and everyone is on track. We also created a group chat as mean of communication, where we frequently ask questions if we are unsure of how to implement certain functionalities or if we don't understand parts of the specification. So far, we have helped and learned a lot from each other.\\
+\-\hspace{1cm}For the styling convention, we first thought of using the style 
+\-\hspace{1cm}Although, as a team, we are working quite effectively and efficiently, we could definitely make some improvements for the remaining part of the C Group Project. Below are our thoughts on how our team can improve in the future.
 
-We then discussed the data types that would be best suitable for registers, memory, instructions, etc.
+\begin{quote}
+  "I think it would be nice if we can start our work a bit more early next time" -Taeho
+\end{quote}
+\begin{quote}
+  "I think it would be nice if we can..." -Devin
+\end{quote}
+\begin{quote}
+  "I think it would be nice if we can..." -Shewta
+\end{quote}
+\begin{quote}
+  "I think it would be nice if we can..." -Mithun
+\end{quote}
 
-Our group is having regular meetings via Teams, constantly checking each others progress to ensure that anyone is not falling behind. By also asking questions whenever we are unsure of something, 
 
-For the styling convention, we 
+\section{Implementation Strategies}
 
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
+\begin{itemize}
+    \item \texttt{data\_processing.c}
+    \item \texttt{data\_processing\_utilies.c} contains the functions required 
+    \item \texttt{multiply.c}
+    \item \texttt{branch.c}
+    \item \texttt{single_data_transfer.c}
+    \item \texttt{branch.c}
+    \item \texttt{branch.c}
+\end{itemize}
 
-Our group is having regular meetings, via Teams, to constantly check out each others progress to ensure that we are not falling behind. 
+\end{document}
 
 \section{Implementation Strategies}
 

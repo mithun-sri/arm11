@@ -208,8 +208,9 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
 
         switch(shift_type) {
             case LSL: 
-              operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry); break;
+              operand2 = new_operand2_with_carry.value; update_c(cpsr, new_operand2_with_carry.carry);
               update_c(cpsr, new_operand2_with_carry.carry);
+              break;
             case LSR: 
               operand2 = logical_right_shift(shift_amount, &rmPtr).value; 
               update_c(cpsr, new_operand2_with_carry.carry);
