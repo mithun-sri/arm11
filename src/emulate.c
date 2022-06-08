@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include <stdio.h>
-#include "emulate.h"
+#include <stdio.h> 
+
 #define BYTES_PER_WORD 4
 #define MAX_INSTR_COUNT 16384
 #define MEMORY_CAPACITY 65536
