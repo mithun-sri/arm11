@@ -25,16 +25,4 @@ int main(int argc, char **argv) {
   /* Begin execution */
 
   return EXIT_SUCCESS;
-=======
-    fseek(fPtr, 0, SEEK_SET);
-    uint8_t *memory = calloc(MAX_SPACE, sizeof(uint8_t));
-    size_t file_size = fread(memory, MAX_SPACE, 1, fPtr) / BYTES_PER_WORD;
-    fclose(fPtr); 
-
-  for (uint32_t i = 0; i < file_size; i++){
-  }
-
-  /* Begin execution */
-  exit(EXIT_SUCCESS)
->>>>>>> 06fbb8b1d072a648d404bec5ec7db22e8d03b089
 }

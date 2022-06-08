@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "emulate.h"
 #define BYTES_PER_WORD 4
-#define MAX_INSTR_COUNT 16384
 
 int main(int argc, char **argv) {
   FILE *file;
@@ -19,22 +18,16 @@ int main(int argc, char **argv) {
   *memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
   /* Load instructions into memory */
-  fread(memory, BYTES_PER_WORD, MAX_INSTR_COUNT, file); 
+  fseek(file, 0, SEEK_END);
+  uint32_t file_size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  for (uint32_t i = 0; i < file_size; i++){
+      
+  }
+
   fclose(file);
 
   /* Begin execution */
-
   return EXIT_SUCCESS;
-=======
-    fseek(fPtr, 0, SEEK_SET);
-    uint8_t *memory = calloc(MAX_SPACE, sizeof(uint8_t));
-    size_t file_size = fread(memory, MAX_SPACE, 1, fPtr) / BYTES_PER_WORD;
-    fclose(fPtr); 
-
-  for (uint32_t i = 0; i < file_size; i++){
-  }
-
-  /* Begin execution */
-  exit(EXIT_SUCCESS)
->>>>>>> 06fbb8b1d072a648d404bec5ec7db22e8d03b089
 }

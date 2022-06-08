@@ -2,11 +2,10 @@
 #include <stdio.h>
 #include "emulate.h"
 #define BYTES_PER_WORD 4
-#define MAX_INSTR_COUNT 16384
 
 int main(int argc, char **argv) {
-  FILE *file;
-  if ((file = fopen(argv[1], "rb")) == NULL){
+  FILE *fPtr;
+  if ((fPtr = fopen(argv[1], "rb")) == NULL){
     perror("Error opening file");
     exit(EXIT_FAILURE);
   }
@@ -16,16 +15,9 @@ int main(int argc, char **argv) {
   *regs.gen_regs = calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t));
   regs.cpsr = 0;
   regs.pc = 0;
-  *memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
+  uint8_t *memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
   /* Load instructions into memory */
-  fread(memory, BYTES_PER_WORD, MAX_INSTR_COUNT, file); 
-  fclose(file);
-
-  /* Begin execution */
-
-  return EXIT_SUCCESS;
-=======
     fseek(fPtr, 0, SEEK_SET);
     uint8_t *memory = calloc(MAX_SPACE, sizeof(uint8_t));
     size_t file_size = fread(memory, MAX_SPACE, 1, fPtr) / BYTES_PER_WORD;
@@ -36,5 +28,4 @@ int main(int argc, char **argv) {
 
   /* Begin execution */
   exit(EXIT_SUCCESS)
->>>>>>> 06fbb8b1d072a648d404bec5ec7db22e8d03b089
 }

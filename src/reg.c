@@ -19,7 +19,7 @@ int fileReader(FILE* fPtr) {
     // start reading at beginning of file - CHECK IF NEEDED
     fseek(fPtr, 0, SEEK_SET);
 
-    uint32_t *memory = calloc(MAX_SPACE, sizeof(uint32_t));
+    uint8_t *memory = calloc(MAX_SPACE, sizeof(uint8_t));
     size_t sizeOfFile = fread(memory, MAX_SPACE, 1, fPtr);
 
     fclose(fPtr);
