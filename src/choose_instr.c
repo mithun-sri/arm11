@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void choose_instruction (uint32_t instr){
+
 uint8_t bit_27 = (instruction >> 27) & 1;
 uint8_t bit_26 = (instruction >> 26) & 1;
 uint8_t bit_22_27 = (instruction >> 22) & ((1 << 5));
@@ -23,7 +25,7 @@ else {
      data_processing(instruction);
    }
  }
-    
+}    
  
 
 
