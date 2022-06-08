@@ -21,7 +21,7 @@ void update_z(uint32_t* cpsr, uint32_t res) {
 }
 
 void update_c(uint32_t* cpsr, uint8_t flag) {
-    if (flag == 0) {
+    if (flag == 1) {
         *cpsr |= 1 << CPSR_C_OFFSET;
     } else {
         *cpsr &= C_CLEAR;
@@ -206,10 +206,10 @@ void manage(uint32_t instruction, struct REGISTERS* r) {
         }
 
         switch(shift_type) {
-            case LSL: logical_left_shift(shift_amount, &rm_ptr); break;
-            case LSR: logical_right_shift(shift_amount, &rm_ptr); break;
-            case ASR: arithmetic_right_shift(shift_amount, &rm_ptr); break;
-            case ROR: rotate_right(shift_amount, &rm_ptr); break;
+            case LSL: operand2 = logical_left_shift(shift_amount, &rmPtr).value; break;
+            case LSR: operand2 = logical_right_shift(shift_amount, &rmPtr).value; break;
+            case ASR: operand2 = arithmetic_right_shift(shift_amount, &rmPtr).value; break;
+            case ROR: operand2 = rotate_right(shift_amount, &rmPtr).value; break;
             default: printf("shift_type error\n");
         }
     }
