@@ -15,12 +15,14 @@ void run_emulator(struct registers regs) {
       instruction = pipe.decoded;
       pipe.instr_set = 1;
       pipe.decode_set = 0;
-      if (pipe.fetch_set) {
-	pipe.decoded = pipe.fetched;
-	pipe.decode_set = 1;
-	pipe.fetch_set = 0;
-      }
     }
+      
+    if (pipe.fetch_set) {
+	    pipe.decoded = pipe.fetched;
+	    pipe.decode_set = 1;
+	    pipe.fetch_set = 0;
+    }
+    
     pipe.fetched = *(regs.pc);
 
 
