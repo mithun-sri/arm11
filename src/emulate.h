@@ -9,7 +9,7 @@
 
 struct registers {
 	uint32_t *gen_regs[NUM_GEN_PURPOSE_REGISTERS];
-	uint32_t pc;
+	uint32_t *pc;
 	uint32_t cpsr;
 };
 
