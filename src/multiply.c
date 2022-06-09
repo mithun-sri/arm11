@@ -27,9 +27,3 @@ void multiply(uint32_t instruction, struct registers r) {
     }
   }
 }
-  
-    
-  
-
-
-
