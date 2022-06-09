@@ -9,4 +9,6 @@ struct data_pipeline {
   uint8_t instr_set;
 };
 
+void execute_instr(uint32_t instruction, struct registers regs);
+
 void run_emulator(struct registers regs);
