@@ -4,7 +4,6 @@ int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *mem
 	if (suceeds(instruction, r) != 1){
 		exit(EXIT_FAILURE);
 	}
-	int i_bit = extract_bits(instruction, 25, 26);
 	int l_bit = extract_bits(instruction, 20, 21);
 	int p_bit = extract_bits(instruction, 24, 25);
 	int up_bit = extract_bits(instruction, 23, 24);
@@ -12,8 +11,7 @@ int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *mem
 	uint32_t rn = r->gen_regs[rn_location];
 	int rd_location = extract_bits(instruction, 12, 16);
 	uint32_t *rd = &r-> gen_regs[rd_locationn];
-	uint16_t offset_bits = extract_bits(instruction, 0, 12);
-    uint32_t offset = manage(instruction, r);
+	uint32_t offset = find_offset(instruction, r);
 
     /* Check pre/post indexing */
     if (p_bit == 1){
@@ -28,6 +26,58 @@ int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *mem
         register_write(rn, new_address);
     }
     return EXIT_SUCCESS;
+}
+
+uint32_t find_offset(uint32_t instr, struct registers* r){
+	int i_bit = extract_bits(instr, 25, 26);
+	if (i_bit == 1){
+		/* Shifted register */
+		int rm_loc = extract_bits(instr, 0, 4);
+		uint32 *rm = r->gen_regs[rm_loc];
+		int shift_type = extract_bits(instr, 5, 7);
+		int specify_bit = extract_bits(instr, 4, 5);
+		if (specify_bit){
+			/* Shift specified by a register */
+			int shift_register = extract_bits(instr, 8, 12);
+			uint8_t shift_amount = r->gen_regs[shift_register];
+			return perform_shift(*rm, shift_amount, shift_type);
+		} else {
+			/* Shift specified by a constant amount */
+			uint8_t shift_amount = (uint16_t) extract_bits(instr, 7, 12);
+			return perform_shift(*rm, shift_amount, shift_type);
+		}
+	} else {
+		/* Unsigned 12 bit immediate offset */
+		return (uint16_t) extract_bits(instr, 0, 12);
+	}
+}
+
+uint32_t perform_shift(uint32_t val, uint8_t shift_amount, int shift_type){
+	switch(shift_type){
+		case 0:
+			/* Logical left */
+			Operand2 offset = logical_left_shift(shift_amount, val);
+			return offset.value;
+			break;
+		case 1: 
+			/* Logical right */
+			Operand2 offset = logical_right_shift(shift_amount, val);
+			return offset.value;
+			break;
+		case 2: 
+			/* Arithmetic right */
+			Operand2 offset = arithmetic_right_shift(shift_amount, val);
+			return offset.value;
+			break;
+		case 3:
+			/* Rotate right */
+			Operand2 offset = rotate_right(shift_amount, val);
+			return offset.value;
+			break;
+		default:
+			printf("Error! Unknown shift type!");
+			break;
+	}
 }
 
 void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd){
