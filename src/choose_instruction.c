@@ -51,7 +51,7 @@ void run_emulator(struct registers regs) {
     }
     
     pipe.fetched = *(regs.pc);
-
+    regs.pc += 4;
 
     if (pipe.instr_set) {
       execute_instr(instruction, regs);
