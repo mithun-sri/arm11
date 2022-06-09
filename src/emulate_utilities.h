@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "data_processing.h"
 
 #define COND_OFFSET 28
 #define CPSR_N_OFFSET 31
@@ -21,8 +20,6 @@ typedef enum {
     LE = 13,
     AL = 14
 } CondCode;
-
-void manage(uint32_t instruction, struct registers* r);
 
 uint8_t get_bit(uint32_t content);
 
