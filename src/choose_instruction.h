@@ -12,3 +12,5 @@ struct data_pipeline {
 void execute_instr(uint32_t instruction, struct registers regs);
 
 void run_emulator(struct registers regs);
+
+void print_register_state(struct registers regs);
