@@ -11,8 +11,8 @@ void branch(uint32_t instruction, struct registers regs) {
       offset |= SIGN_EXT_MASK;
     }
 
-    uint32_t branched_instr_addr = *regs.pc + offset;
-    *regs.pc = branched_instr_addr;
+    uint32_t branched_instr_addr = *(regs.pc) + offset;
+    regs.pc = branched_instr_addr;
   }
 
 }
