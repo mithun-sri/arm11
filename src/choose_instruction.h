@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include "emulate_architecture.h"
 #include "branch.h"
+#include "multiply.h"
+#include "data_processing.h"
 
 struct data_pipeline {
   uint32_t fetched;

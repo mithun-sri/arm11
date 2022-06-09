@@ -1,16 +1,16 @@
 #include "single_data_transfer.h"
 
-void single_data_transfer(uint32_t instruction, struct registers r, uint8_t *memory){
-	if (suceeds(instruction, r) != 1){
+void single_data_transfer(uint32_t instruction, struct registers r){
+	if (succeeds(instruction, r) != 1){
 		exit(EXIT_FAILURE);
 	}
 	int l_bit = extract_bits(instruction, 20, 21);
 	int p_bit = extract_bits(instruction, 24, 25);
 	int up_bit = extract_bits(instruction, 23, 24);
 	int rn_location = extract_bits(instruction, 16, 20);
-	uint32_t rn = r->gen_regs[rn_location];
+	uint32_t *rn = *r.gen_regs[rn_location];
 	int rd_location = extract_bits(instruction, 12, 16);
-	uint32_t *rd = &r-> gen_regs[rd_locationn];
+	uint32_t rd = *r.gen_regs[rd_location];
 	uint32_t offset = find_offset(instruction, r);
 
     /* Check pre/post indexing */
@@ -23,23 +23,23 @@ void single_data_transfer(uint32_t instruction, struct registers r, uint8_t *mem
         perform_transfer(l_bit, rn, rd);
         uint32_t new_address = compute_address(rn, offset, up_bit);
         /* Update base register */
-        register_write(rn, new_address);
+        register_write(*rn, new_address);
     }
 }
 
-uint32_t find_offset(uint32_t instr, struct registers* r){
+uint32_t find_offset(uint32_t instr, struct registers r){
 	int i_bit = extract_bits(instr, 25, 26);
 	if (i_bit == 1){
 		/* Shifted register */
 		int rm_loc = extract_bits(instr, 0, 4);
-		uint32 *rm = r->gen_regs[rm_loc];
+		uint32_t rm = *r.gen_regs[rm_loc];
 		int shift_type = extract_bits(instr, 5, 7);
 		int specify_bit = extract_bits(instr, 4, 5);
 		if (specify_bit){
 			/* Shift specified by a register */
 			int shift_register = extract_bits(instr, 8, 12);
-			uint8_t shift_amount = r->gen_regs[shift_register];
-			return perform_shift(*rm, shift_amount, shift_type);
+			uint8_t shift_amount = (uint8_t) *r.gen_regs[shift_register];
+			return perform_shift(rm, shift_amount, shift_type);
 		} else {
 			/* Shift specified by a constant amount */
 			uint8_t shift_amount = (uint16_t) extract_bits(instr, 7, 12);
@@ -52,25 +52,26 @@ uint32_t find_offset(uint32_t instr, struct registers* r){
 }
 
 uint32_t perform_shift(uint32_t val, uint8_t shift_amount, int shift_type){
+	Operand2 offset;
 	switch(shift_type){
 		case 0:
 			/* Logical left */
-			Operand2 offset = logical_left_shift(shift_amount, val);
+			offset = logical_left_shift(shift_amount, val);
 			return offset.value;
 			break;
 		case 1: 
 			/* Logical right */
-			Operand2 offset = logical_right_shift(shift_amount, val);
+			offset = logical_right_shift(shift_amount, val);
 			return offset.value;
 			break;
 		case 2: 
 			/* Arithmetic right */
-			Operand2 offset = arithmetic_right_shift(shift_amount, val);
+			offset = arithmetic_right_shift(shift_amount, val);
 			return offset.value;
 			break;
 		case 3:
 			/* Rotate right */
-			Operand2 offset = rotate_right(shift_amount, val);
+			offset = rotate_right(shift_amount, val);
 			return offset.value;
 			break;
 		default:
@@ -82,16 +83,16 @@ uint32_t perform_shift(uint32_t val, uint8_t shift_amount, int shift_type){
 void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd){
     if (l_bit == 1){
         /* Load instruction */
-        register_write(&rd, new_address);
+        register_write(rd, new_address);
     } else if (l_bit == 0){
         /* Store instruction */
-        memory_write(&rd, new_address);
+        memory_write((uint8_t) *rd, new_address);
     }
 }
 
 /* Write from memory to register */
 void register_write(uint32_t *dest, uint32_t value){
-    *dest = value;
+    &dest = value;
 }
 
 /* Write from register to memory */

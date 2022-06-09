@@ -6,8 +6,9 @@
 #include <math.h>
 #include "emulate_architecture.h"
 #include "emulate_utilities.h"
+#include "data_processing.h"
 
-void single_data_transfer(uint32_t instruction, struct registers*, uint8_t *memory);
+void single_data_transfer(uint32_t instruction, struct registers);
 
 void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd);
 

@@ -171,24 +171,24 @@ Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content) {
 
 Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
 	Operand2 res = logical_right_shift(shift_amount, content);
-	uint32_t mask = create_contigouous_mask(shift_amount);	
+	uint32_t mask = create_contiguous_mask(shift_amount);	
 	res.value = res.value & (mask & content) << (MOST_SIGNIFICANT_OFFSET - shift_amount); 
 	
 	return res;
 }
 
-void manage(uint32_t instruction, struct registers* r) {
+void manage(uint32_t instruction, struct registers r) {
     uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
     uint8_t bit26 = (instruction >> BIT_26_OFFSET) & LAST_BIT_MASK;
     uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
     Opcode opcode = (instruction >> OPCODE_OFFSET) & LAST_FOUR_BITS_MASK;
     uint8_t s_bit = (instruction >> S_BIT_OFFSET) & LAST_BIT_MASK;
     uint8_t rn_pos = (instruction >> RN_OFFSET) & LAST_FOUR_BITS_MASK;
-    uint32_t rn = r->general[rn_pos];
+    uint32_t rn = *r.gen_regs[rn_pos];
     uint8_t rd_pos = (instruction >> RD_OFFSET) & LAST_FOUR_BITS_MASK;
-    uint8_t *rd = &r->general[rd_pos];
+    uint8_t *rd = &r.gen_regs[rd_pos];
     uint32_t operand2 = (instruction & OPERAND_2_MASK);
-    uint32_t *cpsr = &r->cpsr;
+    uint32_t *cpsr = &r.cpsr;
     Operand operand2_with_carry;
   
     if (i_bit) {

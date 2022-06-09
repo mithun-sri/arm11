@@ -69,33 +69,33 @@ typedef struct {
 	uint32_t value;
 } Operand2;
 
-void update_n(uint32_t* cpsr, int res);
+void update_n(uint32_t* cpsr, uint32_t res);
 
-void update_z(uint32_t* cpsr, int res);
+void update_z(uint32_t* cpsr, uint32_t res);
 
-void update_c(uint32_t* cpsr, int flag);
+void update_c(uint32_t* cpsr, uint8_t flag);
 
-void update_v(uint32_t* cpsr, int flag);
+void update_v(uint32_t* cpsr, uint8_t flag);
 
-void and(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+void and(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void eor(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+void eor(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void sub(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+void sub(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void rsb(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+void rsb(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void add(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+void add(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void tst(int sBit, uint32_t* cpsr, int rn, int operand2);
+void tst(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
 
-void teq(int sBit, uint32_t* cpsr, int rn, int operand2);
+void teq(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
 
-void cmp(int sBit, uint32_t* cpsr, int rn, int operand2);
+void cmp(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
 
-void orr(int sBit, uint32_t* cpsr, int rn, int operand2, uint32_t* rd);
+void orr(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void mov(int sBit, uint32_t* cpsr, int operand2, uint32_t* rd);
+void mov(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
 Operand2 logical_left_shift(uint8_t, uint32_t);
 
