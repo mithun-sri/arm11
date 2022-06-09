@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdint.h>
 #include "data_processing.h"
 
 //check update_c functions
