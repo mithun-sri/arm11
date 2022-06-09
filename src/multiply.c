@@ -21,9 +21,9 @@ void multiply(uint32_t instruction, struct registers regs) {
 
     if (set_conditions == 1) {
       if (result == 0) {
-        r.cpsr |= Z_MASK_CPSR;  
+        regs.cpsr |= Z_MASK_CPSR;  
       } else if (result < 0) {
-        r.cpsr |= N_MASK_CPSR;
+        regs.cpsr |= N_MASK_CPSR;
       }
     }
   }

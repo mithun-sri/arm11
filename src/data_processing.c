@@ -186,7 +186,7 @@ void manage(uint32_t instruction, struct registers r) {
     uint8_t rn_pos = (instruction >> RN_OFFSET) & LAST_FOUR_BITS_MASK;
     uint32_t rn = *r.gen_regs[rn_pos];
     uint8_t rd_pos = (instruction >> RD_OFFSET) & LAST_FOUR_BITS_MASK;
-    uint8_t *rd = &r.gen_regs[rd_pos];
+    uint8_t *rd = (uint8_t*) &r.gen_regs[rd_pos];
     uint32_t operand2 = (instruction & OPERAND_2_MASK);
     uint32_t *cpsr = &r.cpsr;
     Operand2 operand2_with_carry;
@@ -194,38 +194,39 @@ void manage(uint32_t instruction, struct registers r) {
     if (i_bit) {
         uint8_t rotate = 2 * (operand2 >> ROTATE_OFFSET);
         uint8_t content = operand2 & OPERAND_2_IMMEDIATE_MASK;
-        operand2 = rotate_right(rotate, content);
+        operand2_with_carry = rotate_right(rotate, content);
+	operand2 = operand2_with_carry.value;
     } else {
-        uint8_t* rm_ptr = operand2 & RM_MASK;
+        uint8_t rm_ptr = (uintptr_t) (operand2 & RM_MASK);
         // represents bit no. 4 in shift
         uint8_t optional_bit = (operand2 >> SHIFT_VALUE_OFFSET) & LAST_BIT_MASK;
         Shift shift_type = (operand2 >> SHIFT_TYPE_OFFSET) & LAST_TWO_BITS_MASK;
         uint8_t shift_amount;
 
         if (optional_bit) {
-            uint8_t *shift_register = operand2 >> RS_OFFSET;
-            shift_amount = &shift_register & LAST_BYTE_MASK;
+            uint8_t shift_register = (uintptr_t) operand2 >> RS_OFFSET;
+            shift_amount = (uintptr_t) &shift_register & (uint8_t) LAST_BYTE_MASK;
         } else {
             shift_amount = operand2 >> SHIFT_AMOUNT_OFFSET;
         }
 
         switch(shift_type) {
             case LSL: 
-              operand2_with_carry = logical_left_shift(shift_amount, &rm_ptr); 
+              operand2_with_carry = logical_left_shift(shift_amount, (uintptr_t) &rm_ptr); 
               operand2 = operand2_with_carry.value;
-              update_c(cpsr, new_operand2_with_carry.carry);
+              update_c(cpsr, operand2_with_carry.carry);
               break;
             case LSR: 
-              operand2_with_carry = logical_right_shift(shift_amount, &rm_ptr); 
+              operand2_with_carry = logical_right_shift(shift_amount, (uintptr_t) &rm_ptr); 
               update_c(cpsr, operand2_with_carry.carry);
               break;
             case ASR: 
-              operand2_with_carry = arithmetic_right_shift(shift_amount, &rm_ptr);
+              operand2_with_carry = arithmetic_right_shift(shift_amount, (uintptr_t) &rm_ptr);
               operand2 = operand2_with_carry.value; 
               update_c(cpsr, operand2_with_carry.carry);
               break;
             case ROR: 
-              operand2_with_carry = rotate_right(shift_amount, &rm_ptr);
+              operand2_with_carry = rotate_right(shift_amount, (uintptr_t) &rm_ptr);
               operand2 = operand2_with_carry.value; 
               update_c(cpsr, operand2_with_carry.carry);
               break;

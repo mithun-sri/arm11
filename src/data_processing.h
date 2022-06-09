@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "emulate_utilities.h"
 #include "emulate_architecture.h"
+#include "emulate_utilities.h"
 
 #define LAST_FOUR_BITS_MASK 0xf
 #define BIT_27_OFFSET 27
