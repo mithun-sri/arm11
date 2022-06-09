@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "choose_instruction.h"
 
 #define BYTES_PER_WORD 4
 #define MAX_INSTR_COUNT 16834

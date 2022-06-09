@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define COND_OFFSET 28
 #define CPSR_N_OFFSET 31

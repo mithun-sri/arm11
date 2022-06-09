@@ -1,6 +1,6 @@
 #include "choose_instruction.h"
 
-void execute_instr(uint32_t instruction, struct registers regs) {
+void execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe) {
   uint8_t bit_27 = (instruction >> 27) & 1;
   uint8_t bit_26 = (instruction >> 26) & 1;
   uint8_t bit_22_27 = (instruction >> 22) & ((1 << 5));
@@ -55,16 +55,16 @@ void run_emulator(struct registers regs) {
     regs.pc += 4;
 
     if (pipe.instr_set) {
-      execute_instr(instruction, regs);
+      execute_instr(instruction, regs, pipe);
     }
   }
 
-  if (decode_set) {
-    execute_instr(decoded, regs);
+  if (pipe.decode_set) {
+    execute_instr(pipe.decoded, regs, pipe);
   }
 
-  if (fetch_set) {
-    execute_instr(fetched, regs);
+  if (pipe.fetch_set) {
+    execute_instr(pipe.fetched, regs, pipe);
   }
 
 }
@@ -72,19 +72,8 @@ void run_emulator(struct registers regs) {
 
 void print_register_state(struct registers regs) {
   for(int i = 0; i < 13; i++) {
-    printf("r%i: %lf\n", i+1, regs.general[i]);
+    printf("r%i: %lf\n", i+1, (double) *regs.gen_regs[i]);
   }
-  printf("cspr: %lf\n", regs.cspr);
-  printf("pc: %lf\n", regs.pc);
+  printf("cpsr: %lf\n", (double) regs.cpsr);
+  printf("pc: %lf\n", (double) *regs.pc);
 }
-    
-
-
-
-
-
-    
- 
-
-
-

@@ -1,11 +1,6 @@
 #include "emulate_architecture.h"
 #include "choose_instruction.h"
 
-uint8_t *memory;
-
-=======
-#include "choose_instruction.h"
-
 int main(int argc, char **argv) {
   FILE *file;
   if ((file = fopen(argv[1], "rb")) == NULL){
