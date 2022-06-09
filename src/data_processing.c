@@ -189,7 +189,7 @@ void manage(uint32_t instruction, struct registers r) {
     uint8_t *rd = &r.gen_regs[rd_pos];
     uint32_t operand2 = (instruction & OPERAND_2_MASK);
     uint32_t *cpsr = &r.cpsr;
-    Operand operand2_with_carry;
+    Operand2 operand2_with_carry;
   
     if (i_bit) {
         uint8_t rotate = 2 * (operand2 >> ROTATE_OFFSET);
@@ -216,7 +216,7 @@ void manage(uint32_t instruction, struct registers r) {
               update_c(cpsr, new_operand2_with_carry.carry);
               break;
             case LSR: 
-              operand2_with_carry = = logical_right_shift(shift_amount, &rm_ptr); 
+              operand2_with_carry = logical_right_shift(shift_amount, &rm_ptr); 
               update_c(cpsr, operand2_with_carry.carry);
               break;
             case ASR: 
@@ -225,7 +225,7 @@ void manage(uint32_t instruction, struct registers r) {
               update_c(cpsr, operand2_with_carry.carry);
               break;
             case ROR: 
-              operand2_with_carry = rotate_right(shift_amount, &rm_ptr)
+              operand2_with_carry = rotate_right(shift_amount, &rm_ptr);
               operand2 = operand2_with_carry.value; 
               update_c(cpsr, operand2_with_carry.carry);
               break;
