@@ -28,7 +28,7 @@ void execute_instr(uint32_t instruction, struct registers regs) {
 }
 
 
-void run_emulator(struct registers regs) {
+void run_emulator(struct registers* regs) {
 
   uint32_t instruction;
 

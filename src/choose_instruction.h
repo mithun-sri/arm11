@@ -1,5 +1,8 @@
-#include <stdio.h>
+#ifndef CHOOSE_INSTRUCTION_H
+#define CHOOSE_INSTRUCTION_H
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
 
 struct data_pipeline {
   uint32_t fetched;
@@ -12,3 +15,4 @@ struct data_pipeline {
 void execute_instr(uint32_t instruction, struct registers regs);
 
 void run_emulator(struct registers regs);
+#endif
