@@ -16,10 +16,10 @@ void choose_instruction (uint32_t instr){
   } else {
     if (bit_22_27 == 0 && bit_4_7 == 9) {
       multiply(instruction);
-      } else {
+    } else {
         data_processing(instruction);
-      }
-   }
+    }
+  }
 }    
  
 
