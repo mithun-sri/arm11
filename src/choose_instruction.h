@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "branch.h"
-#include "data_processing.h"
-#include "multiply.h"
-#include "single_data_transfer.h"
 
 struct data_pipeline {
   uint32_t fetched;
@@ -16,10 +12,10 @@ struct data_pipeline {
   uint8_t instr_set;
 };
 
-void execute_instr(uint32_t instruction, struct registers regs);
+void execute_instr(uint32_t, struct *registers);
 
-void run_emulator(struct registers regs);
+void run_emulator(struct *registers);
 
-void print_register_state(struct registers regs);
+void print_register_state(struct *registers);
 
 #endif

@@ -25,7 +25,7 @@ uint8_t get_bit(uint32_t content);
 
 uint32_t create_contiguous_mask(uint8_t num_bits);
 
-int succeeds(uint32_t instruction, struct REGISTERS* r);
+int succeeds(uint32_t instruction, struct registers);
 
 int extract_bits(uint32_t instr, uint32_t start, uint32_t end);
 

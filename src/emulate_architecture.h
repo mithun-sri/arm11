@@ -1,8 +1,9 @@
-#ifndef EMULATE_H
-#define EMULATE_H
+#ifndef EMULATE_ARCHITECTURE_H
+#define EMULATE_ARCHITECTURE_H
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include "choose_instruction.h"
 
 #define BYTES_PER_WORD 4
 #define MAX_INSTR_COUNT 16834
@@ -17,5 +18,7 @@ struct registers {
 	uint32_t *pc;
 	uint32_t cpsr;
 };
+
+uint8_t* memory;
 
 #endif

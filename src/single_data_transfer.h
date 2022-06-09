@@ -7,7 +7,7 @@
 #include "emulate_architecture.h"
 #include "emulate_utilities.h"
 
-int single_data_transfer(uint32_t instruction, struct REGISTERS* r, uint8_t *memory);
+void single_data_transfer(uint32_t instruction, struct registers*, uint8_t *memory);
 
 void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd);
 

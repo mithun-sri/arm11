@@ -1,6 +1,6 @@
 #include "single_data_transfer.h"
 
-int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *memory){
+void single_data_transfer(uint32_t instruction, struct registers r, uint8_t *memory){
 	if (suceeds(instruction, r) != 1){
 		exit(EXIT_FAILURE);
 	}
@@ -25,7 +25,6 @@ int single_data_transfer(uint32_t instruction, struct registers* r, uint8_t *mem
         /* Update base register */
         register_write(rn, new_address);
     }
-    return EXIT_SUCCESS;
 }
 
 uint32_t find_offset(uint32_t instr, struct registers* r){

@@ -1,7 +1,4 @@
 #include "emulate_architecture.h"
-#include "choose_instruction.h"
-
-uint8_t *memory;
 
 int main(int argc, char **argv) {
   FILE *file;
@@ -14,7 +11,8 @@ int main(int argc, char **argv) {
   struct registers regs;
   *regs.gen_regs = calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t));
   regs.cpsr = 0;
-  regs.pc = 0;
+  *regs.pc = 0;
+  *memory = 0;
   memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
   /* Load instruction */
