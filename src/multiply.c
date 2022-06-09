@@ -1,6 +1,6 @@
 #include "multiply.h"
 
-void multiply(uint32_t instruction, struct *registers r) {
+void multiply(uint32_t instruction, struct registers r) {
   if (succeeds(instruction, r) == 1) {
     uint32_t accumulate = (instruction >> 21) & 1;
     uint32_t set_conditions = (instructions >> 20) & 1;
@@ -27,9 +27,3 @@ void multiply(uint32_t instruction, struct *registers r) {
     }
   }
 }
-  
-    
-  
-
-
-
