@@ -2,6 +2,9 @@
 
 \usepackage{fullpage}
 \usepackage{etoolbox}
+\usepackage{graphicx}
+\graphicspath{ {./assets/emulate_diagram.png/} }
+
 
 \AtBeginEnvironment{quote}{\itshape}
 
@@ -10,42 +13,49 @@
 \author{Mithun Sri, Shweta Banerjee, Devin Fernando, Taeho Kim}
 
 \maketitle
+
 \section{Group Organisation}
 
+
 \-\hspace{1cm}On the 30th of May, our group had an initial offline meeting to discuss how to split up the work. We decided that it would be best for each individual to work on one or two instructions so Mithun was assigned the {\bf Single Data Transfer Instruction}; {\bf Branch / Multiply Instruction} was given to Devin; Shweta and Taeho, responsible for the {\bf Data Processing Instruction}. This was to ensure everyone had fair amount of workload. \\
-\-\hspace{1cm}To keep the style and structure consistent, we then discussed which data types and structures to use for the registers, the memory, the instructions, etc. We also agreed on a same coding style convention (GTK+) so we don't waste time editing the code. \\
-\-\hspace{1cm}After completing the work we were assigned, we met again offline to put our implementations together. We found some common helper functions that can be extracted out to a single file so we created a \texttt{/emulate\_utilities.c} to encompass the functionalities. \\
-\-\hspace{1cm}Our group is having regular meetings via Teams, constantly checking our individual progress to ensure that no one is falling behind and everyone is right on track. We also created a group chat as mean of communication, where we frequently ask questions if we are unsure of how certain functionalities can be implemented or if there is something unclear about the specification. This was found to be very effective since we were able to get solutions to problems quickly and we were able to learn from one another.\\
+\-\hspace{1cm}We then discussed the data types that would be best suitable for registers, memory, instructions, etc. \\
+\-\hspace{1cm}After completing the work we were assigned, we met again offline to put out implementation together.
+\-\hspace{1cm}Our group is having regular meetings via Teams, constantly checking our individual progress to ensure that no one is falling behind and everyone is on track. We also created a group chat as mean of communication, where we frequently ask questions if we are unsure of how to implement certain functionalities or if we don't understand parts of the specification. So far, we have helped and learned a lot from each other.\\
 \-\hspace{1cm}For the styling convention, we first thought of using the style 
-\-\hspace{1cm}Although, as a team, we are working quite effectively and efficiently, we definitely can make some improvements for the remaining part of the C Group Project. Below are our thoughts on how our team can improve in the future.
+\-\hspace{1cm}Although, as a team, we are working quite effectively and efficiently, we could definitely make some improvements for the remaining part of the C Group Project. Below are our thoughts on how our team can improve in the future.
 
 \begin{quote}
-  "I think we can start our work a little more early next time." -Taeho
+  "I think it would be nice if we can start our work a bit more early next time" -Taeho
 \end{quote}
 \begin{quote}
-  -Devin "I think it would be nice if we can..."
+  "I think it would be nice if we can..." -Devin
 \end{quote}
 \begin{quote}
-  "I think it would be nice if we can..." -Shweta
+  "I think we work more efficiently during our in person group meetings, so maybe it is better to have more in person meetings and fewer online meetings" -Shweta
 \end{quote}
 \begin{quote}
   "I think it would be nice if we can..." -Mithun
 \end{quote}
 
+
 \section{Implementation Strategies}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+While writing our individual sections of code, we noticed that oftentimes each person was rewriting different versions of the same function. For example, each person needed to check if the condition of the instruction was satisfied. To ensure we worked as efficiently as possible and to eliminate code duplication, we created two files: emulate\_architecture.h and emulate\_utilities.c which contain all functions required by more than one file and the general structure of the registers and the memory. Looking forward, this will be something we want to keep doing in order to *maintain code hygiene and avoid code duplication*.
 
+We used uint8\_t, uint16\_t, and uint32\_t instead of int to improve memory efficiency *as this means the same number of bits are used on every platform.* As the values stored will always be positive, we used an unsigned representation rather than the signed representation. 
+
+\includegraphics[scale=0.65]{assets/emulate_diagram.png}
+
+Below is a brief explanation of each file – note an instruction is executed if and only if the condition succeeds. 
 \begin{itemize}
-    \item \texttt{data\_processing.c}
-    \item \texttt{emulate\_utilies.c} contains the functions required 
-    \item \texttt{multiply.c}
-    \item \texttt{branch.c}
-    \item \texttt{single_data_transfer.c}
-    \item \texttt{branch.c}
-    \item \texttt{branch.c}
+    \item \texttt{choose\_instruction.c} - This file is responsible for processing the instruction and then calling the right source file to execute the instruction. 
+    \item \texttt{multiply.c} - If the accumulate bit is set, it stores the value of rm * rs + rn in the register rd, where rm, rs, and rn represent the values stored in registers rm, rs, and rn respectively. However, if accumulate is not set, then it stores rm * rs in rd. It updates CPSR flags if the S bit is set. 
+    \item \texttt{single\_data\_transfer.c} - The file contains code which performs either a load instruction or a store instruction depending on the L bit. Then an offset value is calculated which can either be an immediate or another register - this offset value is used to shift the register. A pre-indexing offset or post-indexing offset is also performed which is determined by the P bit. 
+    \item \texttt{data\_processing.c} - This file contains the functionality to execute data processing instructions. First, the instruction is decomposed into its distinct components, some determine the next set of actions to be carried out, while others are register addresses. Depending on the opcode, one of ten different operations are performed using the contents of register Rn and Operand2. The value of Operand2 is determined by the state of the I flag – Operand2 is either a rotated immediate constant or a shifted register. The CPSR flags are updated if and only if the S bit of the instruction is set. 
+    \item \texttt{branch.c} - The offset is extracted, shifted to the left by two bits and sign extended. Then the next instruction is fetched from the pc and the offset is added to it. This next instruction then gets put into the pc again. 
+    \item \texttt{emulate\_architecture.c} - This file contains functions, each of which are common to more than one file. This was done to avoid code duplication and improve efficiency. 
+    \item \texttt{emulate\_utilities.c} - This file consists of the structures defining registers and memory. This is included by all files and universalizes the use of registers and memory for the emulator. 
+    
 \end{itemize}
 
 \end{document}
