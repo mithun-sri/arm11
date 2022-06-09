@@ -249,4 +249,3 @@ void manage(uint32_t instruction, struct registers* r) {
         }
     }
 }
-
