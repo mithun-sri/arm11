@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "emulate_utilities.h"
+#include "emulate_architecture.h"
 
 #define COND_OFFSET 28
 #define BIT_27_MASK 0x8000000
