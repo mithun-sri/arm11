@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "instruction.h"
 #include "emulate_utilities.h"
 
 #define COND_OFFSET 28
