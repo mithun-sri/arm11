@@ -18,4 +18,6 @@ struct registers {
 	uint32_t cpsr;
 };
 
+uint8_t* memory;
+
 #endif
