@@ -1,5 +1,32 @@
 #include "choose_instruction.h"
 
+void execute_instr(uint32_t instruction, struct registers regs) {
+  uint8_t bit_27 = (instruction >> 27) & 1;
+  uint8_t bit_26 = (instruction >> 26) & 1;
+  uint8_t bit_22_27 = (instruction >> 22) & ((1 << 5));
+  uint8_t bit_4_7 = (instruction >> 4) & ((1 << 3));
+
+  if (bit_27 == 1) {
+	  branch(instruction, regs);
+	  pipe.decode_set = 0;
+	  pipe.fetch_set = 0;
+  }
+
+  if (bit_26 == 1) {
+	  single_data_transfer(instruction, regs);
+  }
+
+  else {
+	  if (bit_22_27 == 0 && bit_4_7 == 9) {
+	    multiply(instruction, regs);
+	  }
+  
+	  else {
+	    data_processing(instruction, regs);
+	  }
+  }
+}
+
 void run_emulator(struct registers regs) {
 
   uint32_t instruction;
@@ -27,33 +54,18 @@ void run_emulator(struct registers regs) {
 
 
     if (pipe.instr_set) {
-
-      uint8_t bit_27 = (instruction >> 27) & 1;
-      uint8_t bit_26 = (instruction >> 26) & 1;
-      uint8_t bit_22_27 = (instruction >> 22) & ((1 << 5));
-      uint8_t bit_4_7 = (instruction >> 4) & ((1 << 3));
-
-      if (bit_27 == 1) {
-	      branch(instruction, regs);
-	      pipe.decode_set = 0;
-	      pipe.fetch_set = 0;
-      }
-
-      if (bit_26 == 1) {
-	      single_data_transfer(instruction, regs);
-      }
-
-      else {
-	      if (bit_22_27 == 0 && bit_4_7 == 9) {
-	        multiply(instruction, regs);
-	      }
-  
-	      else {
-	        data_processing(instruction, regs);
-	      }
-      }
+      execute_instr(instruction, regs);
     }
   }
+
+  if (decode_set) {
+    execute_instr(decoded, regs);
+  }
+
+  if (fetch_set) {
+    execute_instr(fetched, regs);
+  }
+
 }
     
 
