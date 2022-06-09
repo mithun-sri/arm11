@@ -134,7 +134,7 @@ void orr(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
     }
 }
 
-void mov(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd) {
+void mov(uint8_t s_bit, uint32_t* cpsr, uint32_t operand2, uint8_t* rd) {
     *rd = operand2;
 
     if (s_bit) {
