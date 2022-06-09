@@ -69,6 +69,7 @@ void run_emulator(struct registers regs) {
 
 }
 
+
 void print_register_state(struct registers regs) {
   for(int i = 0; i < 13; i++) {
     printf("r%i: %lf\n", i+1, regs.general[i]);
