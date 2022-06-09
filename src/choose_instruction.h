@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include "branch.h"
+#include "data_processing.h"
+#include "multiply.h"
+#include "single_data_transfer.h"
 
 struct data_pipeline {
   uint32_t fetched;
