@@ -54,7 +54,6 @@ Below is a brief explanation of each file – note an instruction is executed if
     \item \texttt{data\_processing.c} - This file contains the functionality to execute data processing instructions. First, the instruction is decomposed into its distinct components, some determine the next set of actions to be carried out, while others are register addresses. Depending on the opcode, one of ten different operations are performed using the contents of register Rn and Operand2. The value of Operand2 is determined by the state of the I flag – Operand2 is either a rotated immediate constant or a shifted register. The CPSR flags are updated if and only if the S bit of the instruction is set. 
     \item \texttt{branch.c} - The offset is extracted, shifted to the left by two bits and sign extended. Then the next instruction is fetched from the pc and the offset is added to it. This next instruction then gets put into the pc again. 
     \item \texttt{emulate\_utilities.c} - This file contains helper functions, each of which are needed by more than one file. This prevents code duplication and improves efficiency.
-    \item \texttt{emulate\_architecture.h} - This file consists of the structures defining registers and memory. This is included by all files and universalizes the use of registers and memory for the emulator. 
     
 \end{itemize}
 
