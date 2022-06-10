@@ -97,6 +97,6 @@ Operand2 arithmetic_right_shift(uint8_t, uint32_t);
 
 Operand2 rotate_right(uint8_t, uint32_t);
 
-void manage(uint32_t instruction, struct registers r);
+void data_processing(uint32_t instruction, struct registers r);
 
 #endif
