@@ -8,7 +8,7 @@ void single_data_transfer(uint32_t instruction, struct registers r){
 	int p_bit = extract_bits(instruction, 24, 25);
 	int up_bit = extract_bits(instruction, 23, 24);
 	int rn_location = extract_bits(instruction, 16, 20);
-	uint32_t *rn = *r.gen_regs[rn_location];
+	uint32_t *rn = (uint32_t*) &r.gen_regs[rn_location];
 	int rd_location = extract_bits(instruction, 12, 16);
 	uint32_t rd = *r.gen_regs[rd_location];
 	uint32_t offset = find_offset(instruction, r);
@@ -16,14 +16,14 @@ void single_data_transfer(uint32_t instruction, struct registers r){
     /* Check pre/post indexing */
     if (p_bit == 1){
         /* Pre-indexing */
-        uint32_t new_address = compute_address(rn, offset, up_bit);
+        uint32_t new_address = compute_address(*rn, offset, up_bit);
         perform_transfer(l_bit , new_address, rd);
     } else {
         /* Post-indexing */
-        perform_transfer(l_bit, rn, rd);
-        uint32_t new_address = compute_address(rn, offset, up_bit);
+        perform_transfer(l_bit, *rn, rd);
+        uint32_t new_address = compute_address(*rn, offset, up_bit);
         /* Update base register */
-        register_write(*rn, new_address);
+        register_write((uint32_t*) &rn, new_address);
     }
 }
 
@@ -43,7 +43,7 @@ uint32_t find_offset(uint32_t instr, struct registers r){
 		} else {
 			/* Shift specified by a constant amount */
 			uint8_t shift_amount = (uint16_t) extract_bits(instr, 7, 12);
-			return perform_shift(*rm, shift_amount, shift_type);
+			return perform_shift(rm, shift_amount, shift_type);
 		}
 	} else {
 		/* Unsigned 12 bit immediate offset */
@@ -83,16 +83,16 @@ uint32_t perform_shift(uint32_t val, uint8_t shift_amount, int shift_type){
 void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd){
     if (l_bit == 1){
         /* Load instruction */
-        register_write(rd, new_address);
+        register_write(&rd, new_address);
     } else if (l_bit == 0){
         /* Store instruction */
-        memory_write((uint8_t) *rd, new_address);
+        memory_write((uint8_t*)&rd, new_address);
     }
 }
 
 /* Write from memory to register */
 void register_write(uint32_t *dest, uint32_t value){
-    &dest = value;
+    *dest = value;
 }
 
 /* Write from register to memory */
