@@ -41,7 +41,7 @@
 
 While writing our individual sections of code, we noticed that oftentimes each person was rewriting different versions of the same function. For example, each person needed to check if the condition of the instruction was satisfied. To ensure we worked as efficiently as possible and to eliminate code duplication, we created two files: emulate\_architecture.h and emulate\_utilities.c which contain all functions required by more than one file and the general structure of the registers and the memory. Looking forward, this will be something we want to keep doing in order to *maintain code hygiene and avoid code duplication*.
 
-We used uint8\_t, uint16\_t, and uint32\_t instead of int to improve memory efficiency *as this means the same number of bits are used on every platform.* As the values stored will always be positive, we used an unsigned representation rather than the signed representation.
+We used \texttt{uint8\_t}, \texttt{uint16\_t}, and \texttt{uint32\_t} instead of int to improve memory efficiency *as this means the same number of bits are used on every platform.* As the values stored will always be positive, we used an unsigned representation rather than the signed representation.
 
 \begin{center}
     \includegraphics[scale=0.45]{assets/emulate_diagram.png}
