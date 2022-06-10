@@ -177,7 +177,7 @@ Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
 	return res;
 }
 
-void manage(uint32_t instruction, struct registers r) {
+void data_processing(uint32_t instruction, struct registers r) {
     uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
     uint8_t bit26 = (instruction >> BIT_26_OFFSET) & LAST_BIT_MASK;
     uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
