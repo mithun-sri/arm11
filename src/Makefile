@@ -9,14 +9,17 @@ all: assemble emulate
 
 assemble: assemble.o
 
-emulate: emulate.o
-	cc emulate.o -o emulate
+emulate: emulate.o choose_instruction.o data_processing.o branch.o single_data_transfer.o multiply.o emulate_utilities.o -lm
+#	cc emulate.o -o emulate
 
-emulate.o: emulate.c emulate_architecture.h choose_instruction.c
-	cc -c emulate.c -o emulate.o
+choose_instruction.o: choose_instruction.h choose_instruction.c data_processing.o data_processing.h data_processing.c
+#	cc -c choose_instruction.c -o choose_instruction.o
 
-emulate.c:
-	echo "idk"
+emulate.o: emulate.c emulate_architecture.h
+#	cc -c emulate.c -o emulate.o
+
+#emulate.c: emulate_architecture.h
+#	echo "idk"
 
 clean:
 	rm -f $(wildcard *.o)

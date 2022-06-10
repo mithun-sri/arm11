@@ -7,25 +7,21 @@ uint32_t perform_shift(uint32_t val, uint8_t shift_amount, int shift_type){
 			/* Logical left */
 			offset = logical_left_shift(shift_amount, val);
 			return offset.value;
-			break;
 		case 1: 
 			/* Logical right */
 			offset = logical_right_shift(shift_amount, val);
 			return offset.value;
-			break;
 		case 2: 
 			/* Arithmetic right */
 			offset = arithmetic_right_shift(shift_amount, val);
 			return offset.value;
-			break;
 		case 3:
 			/* Rotate right */
 			offset = rotate_right(shift_amount, val);
 			return offset.value;
-			break;
 		default:
 			printf("Error! Unknown shift type!");
-			break;
+			return 0;
 	}
 }
 
@@ -72,7 +68,7 @@ void register_write(uint32_t *dest, uint32_t value){
 void memory_write(uint8_t *location, uint32_t value){
     uint8_t *ptr = location;
     for (int i = 0; i < BYTES_PER_WORD; i++){
-        uint32_t MASK = 2^((i + 1) * 8) - 1;
+        uint32_t MASK = pow(2, ((i + 1) * 8)) - 1;
         *ptr = (value & MASK) >> (i * 8);
         ptr++;
     }

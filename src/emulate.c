@@ -9,6 +9,7 @@ int main(int argc, char **argv) {
   }
 
   /* Initialise memory and registers to 0 */
+  printf("Demo passed");
   struct registers regs = {{ calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t)), 0, 0 }};
   memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
@@ -18,7 +19,6 @@ int main(int argc, char **argv) {
 
   /* Begin execution */
   run_emulator(regs);
-  printf("Demo passed");
   
   exit(EXIT_SUCCESS);
 }

@@ -82,9 +82,7 @@ void add(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
     uint32_t res = rn + operand2;
     // for overflow either two numbers have MSB == 1 or one number has 1 and 
     // other has 0 and there is a previous carry producing a 0 as the MSB for the result
-    uint8_t flag = (extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 1) 
-    || (extract_bits(rn, 31, 32) == 0) && extract_bits(operand2, 31, 32) == 1 && (extract_bits(res, 31, 32) == 0)
-    || (extract_bits(rn, 31, 32) == 1) && extract_bits(operand2, 31, 32) == 0 && (extract_bits(res, 31, 32) == 0);
+    uint8_t flag = ((extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 1)) || ((extract_bits(rn, 31, 32) == 0) && (extract_bits(operand2, 31, 32) == 1) && (extract_bits(res, 31, 32) == 0)) || ((extract_bits(rn, 31, 32) == 1) && (extract_bits(operand2, 31, 32) == 0) && (extract_bits(res, 31, 32) == 0));
     
     *rd = res;
 
@@ -178,8 +176,7 @@ Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
 }
 
 void data_processing(uint32_t instruction, struct registers r) {
-    uint8_t bit27 = (instruction >> BIT_27_OFFSET) & LAST_BIT_MASK;
-    uint8_t bit26 = (instruction >> BIT_26_OFFSET) & LAST_BIT_MASK;
+	printf("test");
     uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
     Opcode opcode = (instruction >> OPCODE_OFFSET) & LAST_FOUR_BITS_MASK;
     uint8_t s_bit = (instruction >> S_BIT_OFFSET) & LAST_BIT_MASK;

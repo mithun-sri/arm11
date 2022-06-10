@@ -67,6 +67,8 @@ void run_emulator(struct registers regs) {
     execute_instr(pipe.fetched, regs, pipe);
   }
 
+  print_register_state(regs);
+
 }
 
 
