@@ -1,9 +1,11 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include "emulate_architecture.h"
 
 #define COND_OFFSET 28
 #define CPSR_N_OFFSET 31

@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
   }
 
   /* Initialise memory and registers to 0 */
-  struct registers regs = { calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t)), 0, 0};
+  struct registers regs = {{ calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t)), 0, 0 }};
   memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
 
   /* Load instruction */

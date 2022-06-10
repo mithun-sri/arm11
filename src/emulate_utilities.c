@@ -1,11 +1,11 @@
 #include "emulate_utilities.h"
 
-int succeeds(uint32_t instruction, struct REGISTERS* r) {
+int succeeds(uint32_t instruction, struct registers r) {
   int cond = instruction >> COND_OFFSET;
-  int n = r->cpsr >> CPSR_N_OFFSET;
-  int z = (r->cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
-  int c = (r->cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK;
-  int v = (r->cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
+  int n = r.cpsr >> CPSR_N_OFFSET;
+  int z = (r.cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
+  int c = (r.cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK;
+  int v = (r.cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
   
   int flag;
   
@@ -37,7 +37,7 @@ uint32_t create_contiguous_mask(uint8_t num_bits) {
 
 int extract_bits(uint32_t instr, uint32_t start, uint32_t end){
 	uint32_t MASK = pow(2, end) - 1;
-	return (instr & MASK) >> begin;
+	return (instr & MASK) >> start;
 }
 
 
