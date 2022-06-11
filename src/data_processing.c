@@ -132,7 +132,7 @@ void orr(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t*
     }
 }
 
-void mov(uint8_t s_bit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd) {
+void mov(uint8_t s_bit, uint32_t* cpsr, uint32_t operand2, uint8_t* rd) {
     *rd = operand2;
 
     if (s_bit) {
@@ -242,7 +242,7 @@ void data_processing(uint32_t instruction, struct registers r) {
         case TEQ: teq(s_bit, cpsr, rn, operand2); break;
         case CMP: cmp(s_bit, cpsr, rn, operand2); break;
         case ORR: orr(s_bit, cpsr, rn, operand2, rd); break;
-        case MOV: mov(s_bit, cpsr, rn, operand2, rd); break;
+        case MOV: mov(s_bit, cpsr, operand2, rd); break;
         default: printf("Invalid opcode: Operation not supported\n");
         }
     }
