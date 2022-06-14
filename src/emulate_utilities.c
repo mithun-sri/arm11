@@ -39,7 +39,3 @@ int extract_bits(uint32_t instr, uint32_t start, uint32_t end){
 	uint32_t MASK = pow(2, end) - 1;
 	return (instr & MASK) >> start;
 }
-
-
-
-
