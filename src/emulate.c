@@ -12,6 +12,8 @@ int main(int argc, char **argv) {
   printf("Demo passed");
   struct registers regs = {{ calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t)), 0, 0 }};
   memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
+  *(registers.pc) = &memory;
+  
 
   /* Load instruction */
   fread((int8_t *) memory, BYTES_PER_WORD, MAX_INSTR_COUNT, file);
