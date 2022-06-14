@@ -74,20 +74,16 @@ int tst_a(uint32_t rn, Operand2 op2) {
     + (rn << RN_OFFSET) + (op2.value)); 
 }
 
-int teq_a(Opcode opcode, uint32_t rn, Operand2 op2) {
+int teq_a(uint32_t rn, Operand2 op2) {
   uint8_t s_bit = 1;
   return ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET) \
     + (TEQ_OPCODE << OPCODE_OFFSET) + (s_bit << S_BIT_OFFSET) \
     + (rn << RN_OFFSET) + (op2.value)); 
 }
 
-int cmp_a(Opcode opcode, uint32_t rn, Operand2 op2) {
+int cmp_a(uint32_t rn, Operand2 op2) {
   uint8_t s_bit = 1;
   return ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET) \
     + (CMP_OPCODE << OPCODE_OFFSET) + (s_bit << S_BIT_OFFSET) \
     + (rn << RN_OFFSET) + (op2.value));
-}
-
-int main(void) {
-  printf("I am working!\n");
 }
