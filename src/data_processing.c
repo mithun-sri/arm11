@@ -177,7 +177,7 @@ Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content) {
 	Operand2 res = logical_right_shift(shift_amount, content);
 	uint8_t msb = get_bit(MOST_SIGNIFICANT & content);
 	for (int i=0; i<shift_amount; i++) {
-		res.value = res.value | msb << (MOST_SIGNIFICANT_OFFSET - i);	
+		res.value = res.value | msb << (REGISTER_BITS - i);	
 	}
 
 	return res;
