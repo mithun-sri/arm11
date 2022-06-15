@@ -3,6 +3,16 @@
 #include "emulate_architecture.h"
 #include "choose_instruction.h"
 #include "emulate_utilities.h"
+#define BYTE_SIZE 8
+
+/*
+static void write_to_memory(uint8_t* memory, uint32_t addr, uint32_t val){
+    uint8_t i;
+    uint8_t *bytePtr = memory;
+    for (i = 0; i < BYTES_PER_WORD; i++, bytePtr++) {
+        (*bytePtr) = (uint8_t) extract_bits(val, i * BYTE_SIZE, (i + 1) * BYTE_SIZE);
+    }
+}*/
 
 int main(int argc, char **argv) {
 	FILE *file;
@@ -10,26 +20,30 @@ int main(int argc, char **argv) {
 		perror("Error opening file");
 		exit(EXIT_FAILURE);
 	}
+
 	struct registers regs = {{calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t))}, calloc(1, sizeof(uint32_t)), 0};
 	for (int i = 0; i < NUM_GEN_PURPOSE_REGISTERS; i++){
 		regs.gen_regs[i] = calloc(1, sizeof(uint32_t));
 	}
   
-  /*
   fseek(file, 0, SEEK_END);
   int file_size = ftell(file) / BYTES_PER_WORD;
   fseek(file, 0, SEEK_SET);
   uint32_t addr = 0;
-  
-  
-  for (uint32_t i = 0; i < file_size; i++){
-    if (fread(&addr, sizeof(uint32_t), 1, file) == 1){
-      write_to_memory(memory, i * BYTES_PER_WORD, addr);
-    }
-  }
-  */
 
   memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
+
+  for (uint32_t k = 0; k < file_size; k++){
+    uint32_t value = 0;
+    if (fread(&value, sizeof(uint32_t), 1, file) == 1){
+      uint8_t *ptr = &memory[k * BYTES_PER_WORD];
+      for (uint8_t i = 0; i < BYTES_PER_WORD; i++){
+        *ptr = (uint8_t) extract_bits(value, i * BYTE_SIZE, (i + 1) * BYTE_SIZE);
+        ptr++;
+      }
+    }
+  }
+  
   fclose(file);
   run_emulator(regs, memory);
 
