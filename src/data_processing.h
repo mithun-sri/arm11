@@ -69,23 +69,23 @@ struct registers update_c(struct registers reg, uint8_t flag);
 
 struct registers update_v(struct registers reg, uint8_t flag);
 
-void and(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+struct registers and(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
-void eor(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+struct registers eor(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
-void sub(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+struct registers sub(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
-void rsb(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+struct registers rsb(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
 struct registers add(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
-void tst(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
+struct registers tst(struct registers reg, uint8_t sBit, uint8_t rn, uint32_t operand2);
 
-void teq(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
+struct registers teq(struct registers reg, uint8_t sBit, uint8_t rn, uint32_t operand2);
 
-void cmp(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
+struct registers cmp(struct registers reg, uint8_t sBit, uint8_t rn, uint32_t operand2);
 
-void orr(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+struct registers orr(struct registers reg, uint8_t sBit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
 struct registers mov(struct registers reg, uint8_t s_bit, uint32_t operand2, uint8_t rd);
 

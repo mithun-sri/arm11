@@ -60,8 +60,9 @@ uint32_t find_offset(uint32_t instr, struct registers r){
 }
 
 /* Write from memory to register */
-void register_write(uint32_t *dest, uint32_t value){
-    *dest = value;
+struct registers register_write(struct registers reg, uint8_t dest, uint32_t value){
+    *reg.gen_regs[dest] = value;
+	return reg;
 }
 
 /* Write from register to memory */
@@ -73,39 +74,41 @@ void memory_write(uint8_t *location, uint32_t value){
     }
 }
 
-void perform_transfer(int l_bit, uint32_t new_address, uint32_t rd){
+struct registers perform_transfer(struct registers reg, int l_bit, uint32_t new_address, uint8_t rd){
     if (l_bit == 1){
         /* Load instruction */
-        register_write(&rd, new_address);
+        reg = register_write(reg, rd, new_address);
     } else if (l_bit == 0){
         /* Store instruction */
-        memory_write((uint8_t*)&rd, new_address);
+        // memory_write((uint8_t*)&rd, new_address);
     }
+	return reg;
 }
 
-void single_data_transfer(uint32_t instruction, struct registers r){
+struct registers single_data_transfer(uint32_t instruction, struct registers r){
 	if (succeeds(instruction, r) != 1){
 		exit(EXIT_FAILURE);
 	}
 	int l_bit = extract_bits(instruction, 20, 21);
 	int p_bit = extract_bits(instruction, 24, 25);
 	int up_bit = extract_bits(instruction, 23, 24);
-	int rn_location = extract_bits(instruction, 16, 20);
-	uint32_t *rn = (uint32_t*) &r.gen_regs[rn_location];
-	int rd_location = extract_bits(instruction, 12, 16);
-	uint32_t rd = *r.gen_regs[rd_location];
+	uint8_t rn_location = extract_bits(instruction, 16, 20);
+	uint32_t rn = *r.gen_regs[rn_location];
+	uint8_t rd_location = extract_bits(instruction, 12, 16);
 	uint32_t offset = find_offset(instruction, r);
 
     /* Check pre/post indexing */
     if (p_bit == 1){
         /* Pre-indexing */
-        uint32_t new_address = compute_address(*rn, offset, up_bit);
-        perform_transfer(l_bit , new_address, rd);
+        uint32_t new_address = compute_address(rn, offset, up_bit);
+        r = perform_transfer(r, l_bit , new_address, rd_location);
     } else {
         /* Post-indexing */
-        perform_transfer(l_bit, *rn, rd);
-        uint32_t new_address = compute_address(*rn, offset, up_bit);
+        r = perform_transfer(r, l_bit, rn, rd_location);
+        uint32_t new_address = compute_address(rn, offset, up_bit);
         /* Update base register */
-        register_write((uint32_t*) &rn, new_address);
+        r = register_write(r, rn_location, new_address);
     }
+
+	return r;
 }

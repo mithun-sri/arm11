@@ -8,7 +8,7 @@
 #include "data_processing.h"
 // #nclude "branch.h"
 // #include "multiply.h"
-// #include "single_data_transfer.h"
+#include "single_data_transfer.h"
 
 struct data_pipeline {
   uint32_t fetched;

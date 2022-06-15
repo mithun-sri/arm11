@@ -13,8 +13,8 @@ struct registers execute_instr(uint32_t instruction, struct registers regs, stru
 	  pipe.decode_set = 0;
 	  pipe.fetch_set = 0;
   } else if (bit_26 == 1) {
-	  printf("Single data transfer instruction\n");
-	  // single_data_transfer(instruction, regs);
+	  // printf("Single data transfer instruction\n");
+	  regs = single_data_transfer(instruction, regs);
   } else {
 	  if (bit_22_27 == 0 && bit_4_7 == 9) {
 		printf("Multiply instruction");
@@ -68,16 +68,38 @@ void run_emulator(struct registers regs, uint8_t* memory) {
     }
   }
 
-  if (pipe.decode_set) {
+  if (pipe.decode_set && pipe.fetch_set) {
     regs = execute_instr(pipe.decoded, regs, pipe);
+    regs = execute_instr(pipe.fetched, regs, pipe);
+    *regs.pc += 8;
+    pipe.fetch_set = 0;
   }
 
   if (pipe.fetch_set) {
     regs = execute_instr(pipe.fetched, regs, pipe);
+    *regs.pc += 8;
   }
-  
   print_register_state(regs, memory);
+}
 
+static void indent(uint32_t val, uint32_t spaces) {
+    uint32_t no_spaces = spaces;
+    if (val == 0) {
+        no_spaces -= 1; 
+    } else if (extract_bits(val, 31, 32) == 1) {
+        val -= 1;
+        val = ~(val);
+        if (extract_bits(val, 31, 32) == 0) {
+            no_spaces -= 1;
+        }
+    }
+    while ((val > 0) && (no_spaces > 0)) {
+        no_spaces -= 1;
+        val /= 10;
+    }
+    for (int i = 0; i < no_spaces; i++) {
+        printf(" ");
+    }
 }
 
 static void display_memory(uint8_t* memory){
@@ -96,14 +118,19 @@ static void display_memory(uint8_t* memory){
 
 void print_register_state(struct registers regs, uint8_t* memory) {
 	printf("Registers:\n");
-	for(int i = 0; i < 10; i++) {
-		printf("$%i  :          %i (0x%08x)\n", i, *regs.gen_regs[i], *regs.gen_regs[i]);
+	for(int i = 0; i < 13; i++) {
+        printf("$%i", i);
+        indent(i, 3);
+        printf(": ");
+        indent(*regs.gen_regs[i], 10);
+		    printf("%i (0x%08x)\n", *regs.gen_regs[i], *regs.gen_regs[i]);
 	}
-  for (int i = 10; i < 13; i++){
-    printf("$%i :          %i (0x%08x)\n", i, *regs.gen_regs[i], *regs.gen_regs[i]);
-  }
-	printf("PC  :          %i (0x%08x)\n", *regs.pc, *regs.pc);
-	printf("CPSR:          %i (0x%08x)\n", regs.cpsr, regs.cpsr);
-	printf("Non-zero memory:\n");
+	printf("PC  : ");
+  indent(*regs.pc, 10);
+  printf("%i (0x%08x)\n", *regs.pc, *regs.pc);
+	printf("CPSR: ");
+  indent(regs.cpsr, 10);
+  printf("%i (0x%08x)\n", regs.cpsr, regs.cpsr);
+  printf("Non-zero memory:\n");
   display_memory(memory);
 }

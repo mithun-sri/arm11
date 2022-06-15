@@ -1,11 +1,12 @@
 #include "emulate_utilities.h"
 
 int succeeds(uint32_t instruction, struct registers r) {
-  int cond = extract_bits(instruction, 0, 4);
-  int n = r.cpsr >> CPSR_N_OFFSET;
-  int z = (r.cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
+  int cond = extract_bits(instruction, 28, 32);
+  // printf("COND: %i\n", cond);
+  int n = extract_bits(r.cpsr, 31, 32);
+  int z = extract_bits(r.cpsr, 30, 31);
 /*  int c = (r.cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK; */
-  int v = (r.cpsr >> CPSR_V_OFFSET) & LAST_BIT_MASK;
+  int v = extract_bits(r.cpsr, 28, 29);
   
   int flag;
   
