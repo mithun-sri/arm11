@@ -1,7 +1,6 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

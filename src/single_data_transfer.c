@@ -68,8 +68,7 @@ void register_write(uint32_t *dest, uint32_t value){
 void memory_write(uint8_t *location, uint32_t value){
     uint8_t *ptr = location;
     for (int i = 0; i < BYTES_PER_WORD; i++){
-        uint32_t MASK = pow(2, ((i + 1) * 8)) - 1;
-        *ptr = (value & MASK) >> (i * 8);
+	*ptr = (uint8_t) extract_bits(value, i * 8, (i+1) * 8);
         ptr++;
     }
 }

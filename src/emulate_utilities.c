@@ -36,7 +36,11 @@ uint32_t create_contiguous_mask(uint8_t num_bits) {
 }
 
 int extract_bits(uint32_t instr, uint32_t start, uint32_t end){
-	uint32_t MASK = pow(2, end) - 1;
+	uint32_t carry = 1;
+	for (int i = 0; i < end; i++){
+		carry *= 2;
+	}
+	uint32_t MASK = carry - 1;
 	return (instr & MASK) >> start;
 }
 

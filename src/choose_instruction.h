@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "emulate_architecture.h"
-#include "data_processing.h"
-#include "branch.h"
-#include "multiply.h"
-#include "single_data_transfer.h"
+// #include "data_processing.h"
+// #nclude "branch.h"
+// #include "multiply.h"
+// #include "single_data_transfer.h"
 
 struct data_pipeline {
   uint32_t fetched;
@@ -19,8 +19,8 @@ struct data_pipeline {
 
 void execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe);
 
-void run_emulator(struct registers regs);
+void run_emulator(struct registers regs, uint8_t* memory);
 
-void print_register_state(struct registers regs);
+void print_register_state(struct registers regs, uint8_t* memory);
 
 #endif

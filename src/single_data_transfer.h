@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include "emulate_architecture.h"
 #include "emulate_utilities.h"
 #include "data_processing.h"
