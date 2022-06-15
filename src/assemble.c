@@ -50,6 +50,7 @@ Q - How do you generate rotate value? Is it ok to just say rotate == 0 each time
 */
 
 #include <stdio.h>
+#include <string.h>
 #include "emulate_architecture.h"
 #include "data_processing.h"
 
@@ -60,6 +61,8 @@ Q - How do you generate rotate value? Is it ok to just say rotate == 0 each time
 #define COND 0xe
 // not implementing shifted register
 #define I_BIT 0x1
+// no line is longer than 511 characters - spec
+#define MAX_CHARS 511
 
 int mov_a(uint8_t* rd, Operand2 op2) { 
   return ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET) \
@@ -74,16 +77,54 @@ int tst_a(uint32_t rn, Operand2 op2) {
     + (rn << RN_OFFSET) + (op2.value)); 
 }
 
-int teq_a(uint32_t rn, Operand2 op2) {
+int teq_a(Opcode opcode, uint32_t rn, Operand2 op2) {
   uint8_t s_bit = 1;
   return ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET) \
     + (TEQ_OPCODE << OPCODE_OFFSET) + (s_bit << S_BIT_OFFSET) \
     + (rn << RN_OFFSET) + (op2.value)); 
 }
 
-int cmp_a(uint32_t rn, Operand2 op2) {
+int cmp_a(Opcode opcode, uint32_t rn, Operand2 op2) {
   uint8_t s_bit = 1;
   return ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET) \
     + (CMP_OPCODE << OPCODE_OFFSET) + (s_bit << S_BIT_OFFSET) \
     + (rn << RN_OFFSET) + (op2.value));
+}
+
+void tokenize(char instruction[]) {
+  char *str[MAX_CHARS];
+  char delimit[] = " ,";
+  int i = 0;
+  
+  str[i] = strtok(instruction,delimit);
+    while(str[i] != NULL)                    
+    {
+      printf("word %d : %s\n", i, str[i]);
+      i++;
+      str[i] = strtok(NULL, delimit);
+      // for (int j = 0; j < sizeof(str); j++) {
+      //   printf("Printing str value %d : %p", j, str[j]);
+      // }
+    }
+}
+
+int main(void) {
+  printf("I am working!\n");
+  char instruction[511];
+  FILE *fPtr;
+
+// "test.txt" is the name of the test file
+  fPtr = fopen("test.txt", "r");
+
+  if (fPtr == NULL) {
+    printf("File error: Unable to open file");
+    exit(EXIT_FAILURE);
+  }
+
+  if (fgets(instruction, sizeof(instruction), fPtr) != NULL) {
+    tokenize(instruction);
+  } else {
+    printf("File Error: Unable to read file");
+    exit(EXIT_FAILURE);
+  }
 }
