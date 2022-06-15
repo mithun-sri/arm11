@@ -75,24 +75,21 @@ void run_emulator(struct registers regs, uint8_t* memory) {
 
 }
 
-
 void print_register_state(struct registers regs, uint8_t* memory) {
 	printf("Registers:\n");
-	*regs.gen_regs[3] += 4;
-	for(int i = 0; i < NUM_GEN_PURPOSE_REGISTERS; i++) {
+	for(int i = 0; i < 10; i++) {
 		printf("$%i  :          %i (0x%08x)\n", i, *regs.gen_regs[i], *regs.gen_regs[i]);
 	}
-	printf("PC :            %i (0x%08x)\n", *regs.pc, *regs.pc);
+  for (int i = 10; i < 13; i++){
+    printf("$%i :          %i (0x%08x)\n", i, *regs.gen_regs[i], *regs.gen_regs[i]);
+  }
+	printf("PC  :          %i (0x%08x)\n", *regs.pc, *regs.pc);
 	printf("CPSR:          %i (0x%08x)\n", regs.cpsr, regs.cpsr);
 	printf("Non-zero memory:\n");
 	for (int i = 0; i < MEMORY_CAPACITY; i = i + BYTES_PER_WORD){
-		uint8_t *ptr = &memory[i];
-		uint32_t res = 0;
-		for (int j = 0; j < BYTES_PER_WORD; j++){
-			res |= ((*ptr) << (j * BYTES_PER_WORD));
-		}
-		if (res != 0){	
-			printf("0x%08x: 0x%08x\n", i, res);
-		}
+    if (memory[i] != 0){
+      printf("0x%08x: 0x", i);
+      printf("%08x\n", memory[i]);
+    }
 	}
 }

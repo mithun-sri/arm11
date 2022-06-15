@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "emulate_architecture.h"
+#include "emulate_utilities.h"
 // #include "data_processing.h"
 // #nclude "branch.h"
 // #include "multiply.h"

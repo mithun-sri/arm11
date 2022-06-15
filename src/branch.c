@@ -16,5 +16,3 @@ void branch(uint32_t instruction, struct registers regs) {
   }
 
 }
-
- 

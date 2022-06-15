@@ -87,7 +87,7 @@ void cmp(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
 
 void orr(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void mov(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+void mov(uint8_t sBit, uint32_t* cpsr, uint32_t operand2, uint8_t* rd);
 
 Operand2 logical_left_shift(uint8_t, uint32_t);
 
