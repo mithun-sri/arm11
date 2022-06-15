@@ -1,7 +1,7 @@
 #include "choose_instruction.h"
 
 
-void execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe) {
+struct registers execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe) {
   uint8_t bit_27 = extract_bits(instruction, 27, 28);
   uint8_t bit_26 = extract_bits(instruction, 26, 27);
   uint8_t bit_22_27 = extract_bits(instruction, 22, 28);
@@ -20,12 +20,22 @@ void execute_instr(uint32_t instruction, struct registers regs, struct data_pipe
 		printf("Multiply instruction");
 	    	// multiply(instruction, regs);
 	  } else {
-		  printf("Data processing instruction\n");
-	   	// data_processing(instruction, regs);
+		  // printf("Data processing instruction\n");
+	   	regs = data_processing(instruction, regs);
 	  }
   }
+  return regs;
 }
 
+static uint32_t read_memory(uint8_t* address){
+  uint32_t result = 0;
+  uint8_t *ptr = address;
+  for (uint8_t j = 0; j < BYTES_PER_WORD; j++) {
+    result |= ((*ptr) << (j * 8));
+    ptr++; 
+  }
+  return result;
+}
 
 
 void run_emulator(struct registers regs, uint8_t* memory) {
@@ -49,35 +59,25 @@ void run_emulator(struct registers regs, uint8_t* memory) {
 	    pipe.fetch_set = 0;
     }
     
-    pipe.fetched = memory[*(regs.pc)];
+    pipe.fetched = read_memory(&memory[*(regs.pc)]);
     pipe.fetch_set = 1;
     *regs.pc += 4;
 
     if (pipe.instr_set) {
-      execute_instr(instruction, regs, pipe);
+      regs = execute_instr(instruction, regs, pipe);
     }
   }
 
   if (pipe.decode_set) {
-    execute_instr(pipe.decoded, regs, pipe);
+    regs = execute_instr(pipe.decoded, regs, pipe);
   }
 
   if (pipe.fetch_set) {
-    execute_instr(pipe.fetched, regs, pipe);
+    regs = execute_instr(pipe.fetched, regs, pipe);
   }
   
   print_register_state(regs, memory);
 
-}
-
-static uint32_t read_memory(uint8_t* address){
-  uint32_t result = 0;
-  uint8_t *ptr = address;
-  for (uint8_t j = 0; j < BYTES_PER_WORD; j++) {
-    result |= ((*ptr) << (j * 8));
-    ptr++; 
-  }
-  return result;
 }
 
 static void display_memory(uint8_t* memory){

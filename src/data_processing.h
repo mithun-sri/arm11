@@ -61,13 +61,13 @@ typedef struct {
 	uint32_t value;
 } Operand2;
 
-void update_n(uint32_t* cpsr, uint32_t res);
+struct registers update_n(struct registers reg, uint32_t res);
 
-void update_z(uint32_t* cpsr, uint32_t res);
+struct registers update_z(struct registers reg, uint32_t res);
 
-void update_c(uint32_t* cpsr, uint8_t flag);
+struct registers update_c(struct registers reg, uint8_t flag);
 
-void update_v(uint32_t* cpsr, uint8_t flag);
+struct registers update_v(struct registers reg, uint8_t flag);
 
 void and(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
@@ -77,7 +77,7 @@ void sub(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* 
 
 void rsb(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void add(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
+struct registers add(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd);
 
 void tst(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
 
@@ -87,7 +87,7 @@ void cmp(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2);
 
 void orr(uint8_t sBit, uint32_t* cpsr, uint32_t rn, uint32_t operand2, uint8_t* rd);
 
-void mov(uint8_t sBit, uint32_t* cpsr, uint32_t operand2, uint8_t* rd);
+struct registers mov(struct registers reg, uint8_t s_bit, uint32_t operand2, uint8_t rd);
 
 Operand2 logical_left_shift(uint8_t, uint32_t);
 
@@ -97,6 +97,6 @@ Operand2 arithmetic_right_shift(uint8_t, uint32_t);
 
 Operand2 rotate_right(uint8_t, uint32_t);
 
-void data_processing(uint32_t instruction, struct registers r);
+struct registers data_processing(uint32_t instruction, struct registers r);
 
 #endif

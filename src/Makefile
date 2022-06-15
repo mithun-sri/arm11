@@ -10,7 +10,7 @@ all: assemble emulate
 
 assemble: assemble.o
 
-emulate: emulate.o choose_instruction.o emulate_utilities.o
+emulate: emulate.o choose_instruction.o emulate_utilities.o data_processing.o
 
 emulate.o: emulate.c
 	cc -c emulate.c -o emulate.o

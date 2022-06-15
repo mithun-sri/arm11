@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "emulate_architecture.h"
 #include "emulate_utilities.h"
-// #include "data_processing.h"
+#include "data_processing.h"
 // #nclude "branch.h"
 // #include "multiply.h"
 // #include "single_data_transfer.h"
@@ -18,7 +18,7 @@ struct data_pipeline {
   uint8_t instr_set;
 };
 
-void execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe);
+struct registers execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe);
 
 void run_emulator(struct registers regs, uint8_t* memory);
 

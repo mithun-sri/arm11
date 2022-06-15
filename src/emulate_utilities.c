@@ -1,7 +1,7 @@
 #include "emulate_utilities.h"
 
 int succeeds(uint32_t instruction, struct registers r) {
-  int cond = instruction >> COND_OFFSET;
+  int cond = extract_bits(instruction, 0, 4);
   int n = r.cpsr >> CPSR_N_OFFSET;
   int z = (r.cpsr >> CPSR_Z_OFFSET) & LAST_BIT_MASK;
 /*  int c = (r.cpsr >> CPSR_C_OFFSET) & LAST_BIT_MASK; */
@@ -17,9 +17,8 @@ int succeeds(uint32_t instruction, struct registers r) {
     case GT: flag = ((z == 0) && (n == v)); break;
     case LE: flag = ((z == 1) || (n != v)); break;
     case AL: flag = 1; break;
-    default: printf("Conditional Failure\n");
+    default: flag = 0;
   }
-
   return flag;
 }
 
