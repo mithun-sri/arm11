@@ -89,13 +89,13 @@ struct registers orr(struct registers reg, uint8_t sBit, uint8_t rn, uint32_t op
 
 struct registers mov(struct registers reg, uint8_t s_bit, uint32_t operand2, uint8_t rd);
 
-Operand2 logical_left_shift(uint8_t, uint32_t);
+Operand2 logical_left_shift(uint8_t shift_amount, uint32_t content);
 
-Operand2 logical_right_shift(uint8_t, uint32_t);
+Operand2 logical_right_shift(uint8_t shift_amount, uint32_t content);
 
-Operand2 arithmetic_right_shift(uint8_t, uint32_t);
+Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content);
 
-Operand2 rotate_right(uint8_t, uint32_t);
+Operand2 rotate_right(uint8_t shift_amount, uint32_t content);
 
 struct registers data_processing(uint32_t instruction, struct registers r);
 
