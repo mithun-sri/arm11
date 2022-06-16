@@ -42,13 +42,15 @@ struct registers and(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t o
     uint32_t res = *reg.gen_regs[rn] & operand2;
     *reg.gen_regs[rd] = res;
 
+    if (s_bit){
         reg = update_n(reg, res);
         reg = update_z(reg, res);
     }
-    return reg;
+	return reg;
 }
-    uint32_t res = rn ^ operand2;
-    *rd = res;
+struct registers eor(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd){
+    uint32_t res = *reg.gen_regs[rn] ^ operand2;
+    *reg.gen_regs[rd] = res;
 
     if (s_bit) {
         reg = update_n(reg, res);
