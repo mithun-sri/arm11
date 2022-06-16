@@ -184,19 +184,19 @@ Operand2 arithmetic_right_shift(uint8_t shift_amount, uint32_t content) {
 }
 
 Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
-	// printf("Content: %i\n", content);
-    // Operand2 res = logical_right_shift(shift_amount, content);
-	// uint32_t mask = create_contiguous_mask(shift_amount);	
-    // res.value = res.value & (mask & content) << (MOST_SIGNIFICANT_OFFSET - shift_amount); 
-    Operand2 res;
-    res.value = extract_bits(content, shift_amount, 32);
-    res.carry = 0;
+    // Operand2 res;
+    // res.value = extract_bits(content, shift_amount, 32);
+    // res.carry = 0;
 
-    if (shift_amount > 0 ){
-        res.value |= extract_bits(content, 0, shift_amount) << (32 - shift_amount);
-        res.carry = extract_bits(content, shift_amount - 1, shift_amount);
+    // if (shift_amount > 0 ){
+    //     res.value |= extract_bits(content, 0, shift_amount) << (32 - shift_amount);
+    //     res.carry = extract_bits(content, shift_amount - 1, shift_amount);
 
-    }
+    // }
+
+    Operand2 res = logical_right_shift(shift_amount, content);
+	uint32_t mask = create_contigouous_mask(shift_amount);	
+	res.value = res.value | ((mask & content) << (REGISTER_BITS - shift_amount)); 
 	
 	return res;
 }
