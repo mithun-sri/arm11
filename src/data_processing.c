@@ -265,11 +265,11 @@ struct registers data_processing(uint32_t instruction, struct registers r) {
             default: printf("shift_type error\n");
         }
     }
-    //printf("OPCODE: %i", opcode);
-    //printf("CONDITION CODE: %i\n", r.cpsr);
+    // printf("OPCODE: %i", opcode);
+    // printf("CONDITION CODE: %i\n", r.cpsr);
 
     if (succeeds(instruction, r)) {
-        //printf("PASSES\n");
+        // printf("PASSES\n");
         switch (opcode) {
         case AND: r = and(r, s_bit, rn_pos, operand2, rd_pos); break;
         case EOR: r = eor(r, s_bit, rn_pos, operand2, rd_pos); break;
@@ -281,7 +281,7 @@ struct registers data_processing(uint32_t instruction, struct registers r) {
         case TEQ: r = teq(r, s_bit, rn_pos, operand2); break;
         case CMP: r = cmp(r, s_bit, rn_pos, operand2); break;
         case ORR: r = orr(r, s_bit, rn_pos, operand2, rd_pos); break;
-        case MOV: //printf("mov\n"); 
+        case MOV: // printf("mov\n"); 
                 r = mov(r, s_bit, operand2, rd_pos); break;
         default: printf("Invalid opcode: Operation not supported\n");
         }

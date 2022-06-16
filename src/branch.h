@@ -8,6 +8,6 @@
 
 #define SIGN_EXT_MASK 0xFC000000 
 
-void branch(uint32_t instruction, struct registers);
+struct registers branch(uint32_t instruction, struct registers);
 
 #endif

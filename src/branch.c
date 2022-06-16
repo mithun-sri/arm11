@@ -1,18 +1,22 @@
 #include "branch.h"
 
-void branch(uint32_t instruction, struct registers regs) {
+struct registers branch(uint32_t instruction, struct registers regs) {
 
-  if (succeeds(instruction, regs) == 1) {  // checks if conditions are met for the instruction based                                         on the contents of the register file, r.
-    uint32_t mask = ((1 << 24) - 1);
-    uint32_t offset = instruction & mask;
+  if (succeeds(instruction, regs) == 1) {
+    uint32_t offset = extract_bits(instruction, 0, 24);
     offset <<= 2;
 
-    if (((offset >> 24) & 1) == 1) {
+    if (extract_bits(offset, 24, 25) == 1) {
+	    printf("Enters\n");
       offset |= SIGN_EXT_MASK;
     }
 
     uint32_t branched_instr_addr = *(regs.pc) + offset;
+    printf("Offset: %i\n", offset);
+    printf("branched pos: %i\n", branched_instr_addr);
+    printf("Previous PC: %i\n", *regs.pc);
     *regs.pc = branched_instr_addr;
+    printf("New PC: %i\n", *regs.pc);
   }
-
+  return regs;
 }

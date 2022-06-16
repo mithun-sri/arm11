@@ -99,9 +99,9 @@ struct registers perform_transfer(struct registers reg, int l_bit, uint32_t new_
         /* Load instruction */
 		// printf("Writing see");	
 		// display_memory(new_address);
-		if (new_address < MEMORY_CAPACITY - BYTES_PER_WORD){
+		if (new_address <  MEMORY_CAPACITY - BYTES_PER_WORD){
 			uint8_t *ptr = &memory[new_address];
-    		uint32_t value = 0;
+	    		uint32_t value = 0;
     		for (uint8_t i = 0; i < BYTES_PER_WORD; i++) {
         		value |= *ptr << (i * 8);
 				ptr++;
