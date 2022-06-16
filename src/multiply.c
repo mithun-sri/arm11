@@ -20,6 +20,7 @@ void multiply(uint32_t instruction, struct registers regs) {
     *regs.gen_regs[register_to_write_to] = result;
 
     if (set_conditions == 1) {
+      //flaw in logic, will double check
       if (result == 0) {
         regs.cpsr |= Z_MASK_CPSR;  
       } else if (result < 0) {
