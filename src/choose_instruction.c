@@ -6,19 +6,21 @@ struct registers execute_instr(uint32_t instruction, struct registers regs, stru
   uint8_t bit_26 = extract_bits(instruction, 26, 27);
   uint8_t bit_22_27 = extract_bits(instruction, 22, 28);
   uint8_t bit_4_7 = extract_bits(instruction, 4, 8);
+
+//  printf("0x%08x\n", instruction);
   
   if (bit_26 == 1) {
       // printf("Single data transfer instruction\n");
 	    regs = single_data_transfer(instruction, regs, memory);
   } else if (bit_27 == 1) {
 	    // printf("Branch instruction\n");
-	    // branch(instruction, regs);
+	    branch(instruction, regs);
 	    pipe.decode_set = 0;
 	    pipe.fetch_set = 0;
   } else {
 	  if (bit_22_27 == 0 && bit_4_7 == 9) {
 		  // printf("Multiply instruction");
-	    // multiply(instruction, regs);
+	    regs = multiply(instruction, regs);
 	  } else {
 		  // printf("Data processing instruction\n");
 	   	regs = data_processing(instruction, regs);
@@ -47,6 +49,8 @@ void run_emulator(struct registers regs, uint8_t* memory) {
   pipe.instr_set = 0;
 
   while (memory[*regs.pc] != 0) {
+//	 printf("Memory: 0x%08x\n", memory[*regs.pc]);
+//	 printf("PC: %i\n", *regs.pc);
     if (pipe.decode_set) {
       instruction = pipe.decoded;
       pipe.instr_set = 1;
@@ -67,17 +71,16 @@ void run_emulator(struct registers regs, uint8_t* memory) {
       regs = execute_instr(instruction, regs, pipe);
     }
   }
+//  printf("PC After While Loop: %i\n", *regs.pc);
+//  printf("Memory: 0x%08x\n", *regs.pc);
 
   if (pipe.decode_set && pipe.fetch_set) {
-    regs = execute_instr(pipe.decoded, regs, pipe);
-    regs = execute_instr(pipe.fetched, regs, pipe);
+//    printf("0x%08x\n", pipe.decoded);
+	  regs = execute_instr(pipe.decoded, regs, pipe);
+//    printf("0x%08x\n", pipe.fetched);
+	  regs = execute_instr(pipe.fetched, regs, pipe);
     *regs.pc += 8;
     pipe.fetch_set = 0;
-  }
-
-  if (pipe.fetch_set) {
-    regs = execute_instr(pipe.fetched, regs, pipe);
-    *regs.pc += 8;
   }
   print_register_state(regs, memory);
 }

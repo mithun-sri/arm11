@@ -1,6 +1,6 @@
 #include "multiply.h"
 
-void multiply(uint32_t instruction, struct registers regs) {
+struct registers multiply(uint32_t instruction, struct registers regs) {
   if (succeeds(instruction, regs) == 1) {
     uint32_t accumulate = (instruction >> 21) & 1;
     uint32_t set_conditions = (instruction >> 20) & 1;
@@ -23,9 +23,10 @@ void multiply(uint32_t instruction, struct registers regs) {
       //flaw in logic, will double check
       if (result == 0) {
         regs.cpsr |= Z_MASK_CPSR;  
-      } else if (result < 0) {
-        regs.cpsr |= N_MASK_CPSR;
+      } else {
+	      regs.cpsr &= 1 << 31;
       }
     }
   }
+  return regs;
 }

@@ -5,15 +5,6 @@
 #include "emulate_utilities.h"
 #define BYTE_SIZE 8
 
-/*
-static void write_to_memory(uint8_t* memory, uint32_t addr, uint32_t val){
-    uint8_t i;
-    uint8_t *bytePtr = memory;
-    for (i = 0; i < BYTES_PER_WORD; i++, bytePtr++) {
-        (*bytePtr) = (uint8_t) extract_bits(val, i * BYTE_SIZE, (i + 1) * BYTE_SIZE);
-    }
-}*/
-
 int main(int argc, char **argv) {
 	FILE *file;
 	if ((file = fopen(argv[1], "rb")) == NULL){
@@ -39,6 +30,7 @@ int main(int argc, char **argv) {
       uint8_t *ptr = &memory[k * BYTES_PER_WORD];
       for (uint8_t i = 0; i < BYTES_PER_WORD; i++){
         *ptr = (uint8_t) extract_bits(value, i * BYTE_SIZE, (i + 1) * BYTE_SIZE);
+//	printf("0x%08x\n", extract_bits(value, i * BYTE_SIZE, (i + 1) * BYTE_SIZE));
         ptr++;
       }
     }

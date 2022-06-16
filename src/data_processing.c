@@ -195,7 +195,7 @@ Operand2 rotate_right(uint8_t shift_amount, uint32_t content) {
     // }
 
     Operand2 res = logical_right_shift(shift_amount, content);
-	uint32_t mask = create_contigouous_mask(shift_amount);	
+	uint32_t mask = create_contiguous_mask(shift_amount);	
 	res.value = res.value | ((mask & content) << (REGISTER_BITS - shift_amount)); 
 	
 	return res;
