@@ -3,7 +3,7 @@
 struct registers branch(uint32_t instruction, struct registers regs) {
 
   if (succeeds(instruction, regs) == 1) {
-    uint32_t offset = extract_bits(instruction, 0, 24);
+    int32_t offset = extract_bits(instruction, 0, 24);
     offset <<= 2;
 
     if (extract_bits(offset, 24, 25) == 1) {
