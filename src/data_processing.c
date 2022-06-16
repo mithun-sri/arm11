@@ -22,7 +22,7 @@ struct registers update_z(struct registers reg, uint32_t res) {
 
 struct registers update_c(struct registers reg, uint8_t flag) {
     if (flag == 1) {
-        reg.cpsr &= 1 << CPSR_C_OFFSET;
+        reg.cpsr |= 1 << CPSR_C_OFFSET;
     } else {
         reg.cpsr &= C_CLEAR;
     }
