@@ -241,7 +241,7 @@ struct registers data_processing(uint32_t instruction, struct registers r) {
         // printf("Shift type: %i", shift_type);
         switch(shift_type) {
             case LSL:
-            //    printf("LSL\n");
+                // printf("LSL\n");
                 operand2_with_carry = logical_left_shift(shift_amount, *r.gen_regs[rm_ptr]); 
                 operand2 = operand2_with_carry.value;
                 r = update_c(r, operand2_with_carry.carry);

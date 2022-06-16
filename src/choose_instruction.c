@@ -6,19 +6,19 @@ struct registers execute_instr(uint32_t instruction, struct registers regs, stru
   uint8_t bit_26 = extract_bits(instruction, 26, 27);
   uint8_t bit_22_27 = extract_bits(instruction, 22, 28);
   uint8_t bit_4_7 = extract_bits(instruction, 4, 8);
-
-  if (bit_27 == 1) {
-	  printf("Branch instruction\n");
-	  // branch(instruction, regs);
-	  pipe.decode_set = 0;
-	  pipe.fetch_set = 0;
-  } else if (bit_26 == 1) {
-	  // printf("Single data transfer instruction\n");
-	  regs = single_data_transfer(instruction, regs);
+  
+  if (bit_26 == 1) {
+      // printf("Single data transfer instruction\n");
+	    regs = single_data_transfer(instruction, regs, memory);
+  } else if (bit_27 == 1) {
+	    // printf("Branch instruction\n");
+	    // branch(instruction, regs);
+	    pipe.decode_set = 0;
+	    pipe.fetch_set = 0;
   } else {
 	  if (bit_22_27 == 0 && bit_4_7 == 9) {
-		printf("Multiply instruction");
-	    	// multiply(instruction, regs);
+		  // printf("Multiply instruction");
+	    // multiply(instruction, regs);
 	  } else {
 		  // printf("Data processing instruction\n");
 	   	regs = data_processing(instruction, regs);
