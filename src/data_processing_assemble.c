@@ -33,7 +33,7 @@ uint32_t orr_a(uint8_t rn, uint8_t rd, uint8_t op2) {
 
 uint32_t mov_a(uint8_t rd, uint8_t op2) { 
   return (COMMON_DATA_PROCESSING_BITS + (MOV_OPCODE << OPCODE_OFFSET) 
-  + (((long int) rd) << RD_OFFSET) + op2);
+  + (rd << RD_OFFSET) + op2);
 }
 
 uint32_t tst_a(uint8_t rn, uint8_t op2) { 
