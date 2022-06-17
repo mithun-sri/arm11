@@ -3,6 +3,7 @@
 #include "emulate_architecture.h"
 #include "choose_instruction.h"
 #include "emulate_utilities.h"
+
 #define BYTE_SIZE 8
 
 int main(int argc, char **argv) {
@@ -12,7 +13,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	struct registers regs = {{calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t))}, calloc(1, sizeof(uint32_t)), 0};
+	struct registers regs = {{calloc(NUM_GEN_PURPOSE_REGISTERS, sizeof(uint32_t))}, 0};
 	for (int i = 0; i < NUM_GEN_PURPOSE_REGISTERS; i++){
 		regs.gen_regs[i] = calloc(1, sizeof(uint32_t));
 	}
@@ -23,6 +24,11 @@ int main(int argc, char **argv) {
   uint32_t addr = 0;
 
   memory = calloc(MEMORY_CAPACITY, sizeof(uint8_t));
+
+  pipe = calloc(1, sizeof(struct data_pipeline));
+  pipe->fetch_set = 0;
+  pipe->decode_set = 0;
+  pipe->instr_set = 0;
 
   for (uint32_t k = 0; k < file_size; k++){
     uint32_t value = 0;
@@ -43,5 +49,6 @@ int main(int argc, char **argv) {
     free(regs.gen_regs[i]);
   }
   free(memory);
+  free(pipe);
   exit(EXIT_SUCCESS);
 }

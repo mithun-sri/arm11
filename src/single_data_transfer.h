@@ -9,8 +9,6 @@
 
 struct registers single_data_transfer(uint32_t instruction, struct registers r, uint8_t* memory);
 
-struct registers perform_transfer(struct registers r, int l_bit, uint32_t new_address, uint8_t rd, uint8_t* memory);
-
 struct registers register_write(struct registers r, uint8_t dest, uint32_t value);
 
 void memory_write(uint8_t *location, uint32_t value);

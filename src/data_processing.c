@@ -4,7 +4,7 @@
 
 struct registers update_n(struct registers reg, uint32_t res) {
     if ((res & MOST_SIGNIFICANT) != 0) {
-        reg.cpsr |= 1 << CPSR_N_OFFSET;
+        reg.cpsr |= (1 << CPSR_N_OFFSET);
     } else {
         reg.cpsr &= MOST_SIGNIFICANT;
     }
@@ -13,7 +13,7 @@ struct registers update_n(struct registers reg, uint32_t res) {
 
 struct registers update_z(struct registers reg, uint32_t res) {
     if (res == 0) {
-        reg.cpsr |= 1 << CPSR_Z_OFFSET;
+        reg.cpsr |= (1 << CPSR_Z_OFFSET);
     } else {
         reg.cpsr &= Z_CLEAR;
     }
@@ -21,17 +21,21 @@ struct registers update_z(struct registers reg, uint32_t res) {
 }
 
 struct registers update_c(struct registers reg, uint8_t flag) {
-    if (flag == 1) {
-        reg.cpsr |= 1 << CPSR_C_OFFSET;
-    } else {
-        reg.cpsr &= C_CLEAR;
-    }
-    return reg;
+	// printf("Flag : %x\n", flag);
+	if (flag == 1) {
+		//printf("CPSR pre: 0x%08x\n", reg.cpsr);
+	    	reg.cpsr |= (1 << 29);
+		//printf("CPSR pre: 0x%08x\n", reg.cpsr);
+    	} else {
+	   // printf("flag = 0\n");
+	    reg.cpsr &= C_CLEAR;
+    	}
+    	return reg;
 }
 
 struct registers update_v(struct registers reg, uint8_t flag) {
     if (flag == 1) {
-        reg.cpsr |= 1 << CPSR_V_OFFSET;
+        reg.cpsr |= (1 << CPSR_V_OFFSET);
     } else {
         reg.cpsr &= V_CLEAR;
     }
@@ -61,7 +65,7 @@ struct registers eor(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t o
 
 struct registers sub(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd) {
     uint32_t res = *reg.gen_regs[rn] - operand2;
-    uint8_t flag = (*reg.gen_regs[rn] < operand2);
+    uint8_t flag = (*reg.gen_regs[rn] >= operand2);
     *reg.gen_regs[rd] = res;
 
     if (s_bit) {
@@ -74,13 +78,16 @@ struct registers sub(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t o
 
 struct registers rsb(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2, uint8_t rd) {
     uint32_t res = operand2 - *reg.gen_regs[rn];
-    uint8_t flag = (operand2 < *reg.gen_regs[rn]);
+   // printf("0x%08x\n", res);
+    //uint8_t flag = extract_bits(res, 30,31);
+    //printf("RSB Flag: %i\n", flag);
     *reg.gen_regs[rd] = res;
 
     if (s_bit) {
         reg = update_n(reg, res);
         reg = update_z(reg, res);
-        reg = update_c(reg, flag);
+     //   printf("Passed condition\n");
+	reg = update_c(reg, 0);
     }
     return reg;
 }
@@ -124,7 +131,8 @@ struct registers teq(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t o
 
 struct registers cmp(struct registers reg, uint8_t s_bit, uint8_t rn, uint32_t operand2) {
     uint32_t res = *reg.gen_regs[rn] - operand2;
-    uint8_t flag = (*reg.gen_regs[rn] < operand2);
+    uint8_t flag = (*reg.gen_regs[rn] >= operand2);
+    // printf("CMP: Flag %i\n", flag);
 
     if (s_bit) {
         reg = update_n(reg, res);
@@ -204,7 +212,7 @@ struct registers data_processing(uint32_t instruction, struct registers r) {
     uint8_t i_bit = (instruction >> I_BIT_OFFSET) & LAST_BIT_MASK;
     Opcode opcode = (int) extract_bits(instruction, 21, 25);
     // printf("%i\n", opcode);
-    uint8_t s_bit = (instruction >> S_BIT_OFFSET) & LAST_BIT_MASK;
+    uint8_t s_bit = extract_bits(instruction, 20, 21);
     uint8_t rn_pos = extract_bits(instruction, 16, 20);
     // uint32_t rn = *r.gen_regs[rn_pos];
     uint8_t rd_pos = extract_bits(instruction, 12, 16);
@@ -229,11 +237,12 @@ struct registers data_processing(uint32_t instruction, struct registers r) {
         uint8_t shift_amount;
 
         if (optional_bit) {
-            // printf("Optional bit set\n");
             uint8_t shift_register = (uintptr_t) operand2 >> RS_OFFSET;
-            shift_amount = (uintptr_t) &shift_register & (uint8_t) LAST_BYTE_MASK;
+	    //printf("Shift register: %08x\n", shift_register);
+            shift_amount = (uintptr_t) *r.gen_regs[shift_register] & (uint8_t) LAST_BYTE_MASK;
+	    //printf("Shift amount* : %i\n", shift_amount);
         } else {
-            // printf("Optional bit not set\n");
+            //printf("Optional bit not set\n");
             shift_amount = operand2 >> SHIFT_AMOUNT_OFFSET;
         }
 
@@ -243,24 +252,28 @@ struct registers data_processing(uint32_t instruction, struct registers r) {
                 // printf("LSL\n");
                 operand2_with_carry = logical_left_shift(shift_amount, *r.gen_regs[rm_ptr]); 
                 operand2 = operand2_with_carry.value;
-                r = update_c(r, operand2_with_carry.carry);
+                //r = update_c(r, operand2_with_carry.carry);
                 break;
             case LSR: 
              //   printf("LSR\n");
                 operand2_with_carry = logical_right_shift(shift_amount, *r.gen_regs[rm_ptr]); 
-                r = update_c(r, operand2_with_carry.carry);
+		operand2 = operand2_with_carry.value;
+	//	printf("Operand 2: %i\n", operand2);
+	//	printf("Content: %i\n", *r.gen_regs[rm_ptr]);
+	//	printf("Shift amount : %i\n", shift_amount);
+                //r = update_c(r, operand2_with_carry.carry);
                 break;
             case ASR: 
                // printf("ASR");
                 operand2_with_carry = arithmetic_right_shift(shift_amount, *r.gen_regs[rm_ptr]);
                 operand2 = operand2_with_carry.value; 
-                r = update_c(r, operand2_with_carry.carry);
+                //r = update_c(r, operand2_with_carry.carry);
                 break;
             case ROR: 
                 //printf("ROR");
                 operand2_with_carry = rotate_right(shift_amount, *r.gen_regs[rm_ptr]);
                 operand2 = operand2_with_carry.value; 
-                r = update_c(r, operand2_with_carry.carry);
+                //r = update_c(r, operand2_with_carry.carry);
                 break;
             default: printf("shift_type error\n");
         }

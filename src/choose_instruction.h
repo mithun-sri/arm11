@@ -9,16 +9,9 @@
 #include "branch.h"
 #include "multiply.h"
 #include "single_data_transfer.h"
+#include "pipeline.h"
 
-struct data_pipeline {
-  uint32_t fetched;
-  uint32_t decoded;
-  uint8_t fetch_set;
-  uint8_t decode_set;
-  uint8_t instr_set;
-};
-
-struct registers execute_instr(uint32_t instruction, struct registers regs, struct data_pipeline pipe);
+struct registers execute_instr(uint32_t instruction, struct registers regs);
 
 void run_emulator(struct registers regs, uint8_t* memory);
 
