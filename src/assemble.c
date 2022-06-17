@@ -52,15 +52,21 @@ Q - How do you generate rotate value? Is it ok to just say rotate == 0 each time
 #include <stdio.h>
 #include <string.h>
 #include "emulate_architecture.h"
+#include "data_processing_assemble.c"
 
-#define MAX_CHARS 511 // no line is longer than 511 characters - spec
+#define MAX_CHARS 511
+
+typedef struct {
+  char *name;
+  uint32_t next_instr_addr;
+} Label;
 
 uint8_t get_val(char *str[MAX_CHARS], uint8_t pos) {
   str[pos] = str[pos] + 1;
   return atoi(str[pos]);
 }
 
-void tokenize(char instruction[]) {
+uint8_t tokenize(char instruction[], uint8_t line_no) {
   char *str[MAX_CHARS];
   char delimit[] = " ,";
   int i = 0;
@@ -72,43 +78,53 @@ void tokenize(char instruction[]) {
   }
 
   if (!strcmp(str[0], "mov")) {
-  //   // remove r
-  //   uint8_t rd = get_val(str, 1);
-  //   printf("mm: %d\n", rd);
-
-  //   // remove #
-  //   uint8_t op2 = get_val(str, 2);
-  //   printf("mmm: %d\n", op2);
-
-  // printf("%d\n", mov_a(get_val(str, 1), get_val(str, 2)));
-
     mov_a(get_val(str, 1), get_val(str, 2));
+
   } else if (!strcmp(str[0], "add")) {
-    // remove r from rd
-    str[1] = str[1] + 1;
-    uint8_t rd = atoi(str[1]);
-    printf("a1: %d\n", rd);
+    add_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
-    // remove r from rn
-    str[2] = str[2] + 1;
-    uint8_t rn = atoi(str[2]);
-    printf("a: %d\n", rn);
-    
-    // remove # from op2
-    str[3] = str[3] + 1;
-    uint8_t op2 = atoi(str[3]);
-    printf("a: %d\n", op2);
+  } else if (!strcmp(str[0], "sub")) {
+    sub_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
-    printf("a: %d\n", add_a(rn, rd, op2));
+  } else if (!strcmp(str[0], "rsb")) {
+    rsb_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+
+  } else if (!strcmp(str[0], "and")) {
+    and_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+
+  } else if (!strcmp(str[0], "eor")) {
+    eor_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+
+  } else if (!strcmp(str[0], "orr")) {
+    orr_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+
+  } else if (!strcmp(str[0], "tst")) {
+    tst_a(get_val(str, 1), get_val(str, 2));
+
+  } else if (!strcmp(str[0], "teq")) {
+    teq_a(get_val(str, 1), get_val(str, 2));
+
+  } else if (!strcmp(str[0], "cmp")) {
+    cmp_a(get_val(str, 1), get_val(str, 2));
+
+  } else {
+    Label lb;
+    lb.name = str[0];
+    lb.next_instr_addr = line_no;
+
+    // do not increment when label found - syncs in main
+    return (line_no - 1);
   }
+  return line_no;
 }
 
 int main(void) {
   char instruction[511];
+  uint8_t cnt;
   FILE *fPtr;
 
-// "test.txt" is the name of the test file
-  fPtr = fopen("test.txt", "r");
+// "test.s" is the name of the test file
+  fPtr = fopen("test.s", "r");
 
   if (fPtr == NULL) {
     printf("File error: Unable to open file");
@@ -116,7 +132,11 @@ int main(void) {
   }
 
   if (fgets(instruction, sizeof(instruction), fPtr) != NULL) {
-    tokenize(instruction);
+    uint8_t cntSyncer = tokenize(instruction, cnt);
+    cnt = cntSyncer;
+    cnt++;
+    printf("cnt : %d\n", cnt);
+    printf("%s\n", instruction);
   } else {
     printf("File Error: Unable to read file");
     exit(EXIT_FAILURE);
