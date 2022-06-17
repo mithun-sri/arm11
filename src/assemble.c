@@ -120,14 +120,17 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
   // single data transfer -- wait
   } else if (!strcmp(str[0], "ldr")) {
     // check parameter order
+    
   } else if (!strcmp(str[0], "str")) {
     // check parameter order
 
   // special
   } else if (!strcmp(str[0], "andeq")) {
     andeq_a();
+
   } else if (!strcmp(str[0], "lsl")) {
     lsl_a(get_val(str, 1), get_val(str, 2));
+
   } else {
     Label lb;
     lb.name = str[0];
