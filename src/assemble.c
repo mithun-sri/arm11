@@ -4,9 +4,10 @@
 #include "data_processing_assemble.c"
 #include "multiply_assembler.c"
 #include "special_assemble.c"
-#include "branch_assemble.c"
+#include "branch_assembler.c"
 
-#define MAX_CHARS 511
+#define MAX_CHARS 0x1ff
+#define OFFSET_MASK 0xffffff
 
 // used to store labels with their associated memory addresses
 typedef struct {
@@ -103,37 +104,37 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
   // branch
   } else if (!strcmp(str[0], "beq")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     beq_a(offset);
 
   } else if (!strcmp(str[0], "bne")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     bne_a(offset);
 
   } else if (!strcmp(str[0], "bge")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     bge_a(offset);
 
   } else if (!strcmp(str[0], "blt")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     blt_a(offset);
 
   } else if (!strcmp(str[0], "bgt")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     bgt_a(offset);
 
   } else if (!strcmp(str[0], "ble")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     ble_a(offset);
 
   } else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) {
     uint32_t res = addr_finder(labels, str[1]);
-    offset = res - line_no;
+    offset = (res - line_no) & OFFSET_MASK;
     b_a(offset);
 
   } else {
