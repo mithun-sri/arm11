@@ -53,6 +53,8 @@ Q - How do you generate rotate value? Is it ok to just say rotate == 0 each time
 #include <string.h>
 #include "emulate_architecture.h"
 #include "data_processing_assemble.c"
+#include "multiply_assembler.c"
+#include "special_assemble.c"
 
 #define MAX_CHARS 511
 
@@ -77,6 +79,7 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
     str[i] = strtok(NULL, delimit);
   }
 
+  // data_processing
   if (!strcmp(str[0], "mov")) {
     mov_a(get_val(str, 1), get_val(str, 2));
 
@@ -107,14 +110,35 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
   } else if (!strcmp(str[0], "cmp")) {
     cmp_a(get_val(str, 1), get_val(str, 2));
 
+// multiply
+  } else if (!strcmp(str[0], "mul")) {
+    mul_a(get_val(str, 1), get_val(str, 2), get_val(str, 3));
+
+  } else if (!strcmp(str[0], "mla")) {
+    mla_a(get_val(str, 1), get_val(str, 2), get_val(str, 3), get_val(str, 4));
+
+  // single data transfer -- wait
+  } else if (!strcmp(str[0], "ldr")) {
+    // check parameter order
+  } else if (!strcmp(str[0], "str")) {
+    // check parameter order
+
+  // special
+  } else if (!strcmp(str[0], "andeq")) {
+    andeq_a();
+  } else if (!strcmp(str[0], "lsl")) {
+    lsl_a(get_val(str, 1), get_val(str, 2));
   } else {
     Label lb;
     lb.name = str[0];
     lb.next_instr_addr = line_no;
 
     // do not increment when label found - syncs in main
+    // printf("label : %d\n", line_no);
     return (line_no - 1);
   }
+
+  // printf("current cnt : %d\n", line_no);
   return line_no;
 }
 
@@ -127,18 +151,22 @@ int main(void) {
   fPtr = fopen("test.s", "r");
 
   if (fPtr == NULL) {
-    printf("File error: Unable to open file");
+    printf("File error: Unable to open file\n");
     exit(EXIT_FAILURE);
   }
-
-  if (fgets(instruction, sizeof(instruction), fPtr) != NULL) {
-    uint8_t cntSyncer = tokenize(instruction, cnt);
-    cnt = cntSyncer;
-    cnt++;
-    printf("cnt : %d\n", cnt);
-    printf("%s\n", instruction);
-  } else {
-    printf("File Error: Unable to read file");
-    exit(EXIT_FAILURE);
+  while (&free) {
+    if (fgets(instruction, sizeof(instruction), fPtr) != NULL) {
+      // printf("%s\n", instruction);
+      uint8_t cntSyncer = tokenize(instruction, cnt);
+      cnt = cntSyncer;
+      // printf("\n---cnt after label return : %d\n\n", cnt);
+      cnt++;
+    } else {
+      if (feof(fPtr)) {
+        exit(EXIT_SUCCESS);
+      }
+      printf("File Error: Unable to read file\n");
+      exit(EXIT_FAILURE);
+    }
   }
 }
