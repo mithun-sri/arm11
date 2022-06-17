@@ -1,6 +1,5 @@
 #ifndef SPECIAL_ASSEMBLE_H
 #define SPECIAL_ASSEMBLE_H
-#include <stdint.h>
 #include "data_processing_assemble.h"
 
 #define HALT 0x00000000
