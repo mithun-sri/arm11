@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "emulate_architecture.h"
-#include "data_processing_assemble.c"
-#include "multiply_assembler.c"
-#include "special_assemble.c"
-#include "branch_assembler.c"
+#include <assert.h>
+#include "data_processing_assemble.h"
+#include "multiply_assembler.h"
+#include "special_assemble.h"
+#include "branch_assembler.h"
+#include "assemble_utilities.h"
 
 #define MAX_CHARS 0x1ff
 #define OFFSET_MASK 0xffffff
@@ -14,6 +16,11 @@ typedef struct {
   char *name;
   uint32_t next_instr_addr;
 } Label;
+
+typedef struct {
+  uint8_t line_no;
+  char *res;
+} Result;
 
 // gets the integer representation of part of an instruction
 uint8_t get_val(char *str[MAX_CHARS], uint8_t pos) {
@@ -39,10 +46,13 @@ uint8_t startsWith(char *str1, char *str2) {
 }
 
 // splits instructions into segments and passes in the right parameters for each function
-uint8_t tokenize(char instruction[], uint8_t line_no) {
+Result tokenize(char instruction[], uint8_t line_no) {
   char *str[MAX_CHARS];
   char delimit[] = " ,:";
   uint8_t i = 0;
+  Result result;
+  uint32_t res;
+  result.line_no = line_no;
 
   Label labels[MAX_CHARS];
   uint8_t numLabels = 0;
@@ -56,41 +66,41 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
 
   // data_processing
   if (!strcmp(str[0], "mov")) {
-    mov_a(get_val(str, 1), get_val(str, 2));
+    res = mov_a(get_val(str, 1), get_val(str, 2));
 
   } else if (!strcmp(str[0], "add")) {
-    add_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+    res = add_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
   } else if (!strcmp(str[0], "sub")) {
-    sub_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+    res = sub_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
   } else if (!strcmp(str[0], "rsb")) {
-    rsb_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+    res = rsb_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
   } else if (!strcmp(str[0], "and")) {
-    and_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+    res = and_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
   } else if (!strcmp(str[0], "eor")) {
-    eor_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+    res = eor_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
   } else if (!strcmp(str[0], "orr")) {
-    orr_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
+    res = orr_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
 
   } else if (!strcmp(str[0], "tst")) {
-    tst_a(get_val(str, 1), get_val(str, 2));
+    res = tst_a(get_val(str, 1), get_val(str, 2));
 
   } else if (!strcmp(str[0], "teq")) {
-    teq_a(get_val(str, 1), get_val(str, 2));
+    res = teq_a(get_val(str, 1), get_val(str, 2));
 
   } else if (!strcmp(str[0], "cmp")) {
-    cmp_a(get_val(str, 1), get_val(str, 2));
+    res = cmp_a(get_val(str, 1), get_val(str, 2));
 
   // multiply
   } else if (!strcmp(str[0], "mul")) {
-    mul_a(get_val(str, 1), get_val(str, 2), get_val(str, 3));
+    res = mul_a(get_val(str, 1), get_val(str, 2), get_val(str, 3));
 
   } else if (!strcmp(str[0], "mla")) {
-    mla_a(get_val(str, 1), get_val(str, 2), get_val(str, 3), get_val(str, 4));
+    res = mla_a(get_val(str, 1), get_val(str, 2), get_val(str, 3), get_val(str, 4));
 
   // single data transfer -- wait
   } else if (!strcmp(str[0], "ldr")) {
@@ -101,30 +111,30 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
 
   // special
   } else if (!strcmp(str[0], "andeq")) {
-    andeq_a();
+    res = andeq_a();
 
   } else if (!strcmp(str[0], "lsl")) {
-    lsl_a(get_val(str, 1), get_val(str, 2));
+    res = lsl_a(get_val(str, 1), get_val(str, 2));
 
   // branch
   } else if (startsWith(str[0], "b")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
+    uint32_t addr = addr_finder(labels, str[1]);
+    offset = (addr - line_no) & OFFSET_MASK;
 
     if (!strcmp(str[0], "beq")) {
-      beq_a(offset);
+      res = beq_a(offset);
     } else if (!strcmp(str[0], "bne")) {
-      bne_a(offset);
+      res = bne_a(offset);
     } else if (!strcmp(str[0], "bge")) {
-      bge_a(offset);
+      res = bge_a(offset);
     } else if (!strcmp(str[0], "blt")) {
-      blt_a(offset);
+      res = blt_a(offset);
     } else if (!strcmp(str[0], "bgt")) {
-      bgt_a(offset);
+      res = bgt_a(offset);
     } else if (!strcmp(str[0], "ble")) {
-      ble_a(offset);
+      res = ble_a(offset);
     } else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) {
-      b_a(offset);
+      res = b_a(offset);
     } else {
       printf("Branch Error: Instruction not recognized");
     }
@@ -138,37 +148,57 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
     numLabels++;
 
     // do not increment when label found - syncs in main
-    return (line_no - 1);
+    result.res = binary_int_to_chars(big_endian_to_little_endian(line_no));
+    result.line_no -= 1;
   }
+  result.res = binary_int_to_chars(big_endian_to_little_endian(res));
 
-  return line_no;
+  return result;
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
+  assert(argc == 3);
+
   char instruction[511];
   uint8_t cnt;
-  FILE *fPtr;
+  FILE *fReadPtr;
+  FILE *fWritePtr;
 
 // "test.s" is the name of the test file
-  fPtr = fopen("test.s", "r");
+  fReadPtr = fopen(argv[1], "r");
+  fWritePtr = fopen(argv[2], "a");
 
-  if (fPtr == NULL) {
+  if (fReadPtr == NULL) {
     printf("File Error: Unable to open file\n");
     exit(EXIT_FAILURE);
   }
+
+  if (fWritePtr == NULL) {
+    printf("File Error: Unable to write to file\n");
+    exit(EXIT_FAILURE);
+  }
+
   while (&free) {
-    if (fgets(instruction, sizeof(instruction), fPtr) != NULL) {
-      uint8_t cntSyncer = tokenize(instruction, cnt);
+    if (fgets(instruction, sizeof(instruction), fReadPtr) != NULL) {
+      Result curr = tokenize(instruction, cnt);
+      char *res = curr.res;
+      printf("%s\n", res);
+      fwrite(res, NUMBER_OF_INSTRUCTION_BITS, 1, fWritePtr);
+      uint8_t cntSyncer = curr.line_no;
       cnt = cntSyncer;
       cnt++;
+      free(res);
 
     } else {
-      if (feof(fPtr)) {
+      if (feof(fReadPtr)) {
         exit(EXIT_SUCCESS);
 
       }
       printf("File Error: Unable to read file\n");
       exit(EXIT_FAILURE);
-    }
+    } 
   }
+
+  fclose(fReadPtr);
+  fclose(fWritePtr);
 }
