@@ -33,6 +33,11 @@ uint32_t addr_finder(Label labels[MAX_CHARS], char str[]) {
   exit(EXIT_FAILURE);
 }
 
+// checks if str2 starts with str1
+uint8_t startsWith(char *str1, char *str2) {
+  return !strncmp(str2, str1, strlen(str1));
+}
+
 // splits instructions into segments and passes in the right parameters for each function
 uint8_t tokenize(char instruction[], uint8_t line_no) {
   char *str[MAX_CHARS];
@@ -102,41 +107,27 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
     lsl_a(get_val(str, 1), get_val(str, 2));
 
   // branch
-  } else if (!strcmp(str[0], "beq")) {
+  } else if (startsWith(str[0], "b")) {
     uint32_t res = addr_finder(labels, str[1]);
     offset = (res - line_no) & OFFSET_MASK;
-    beq_a(offset);
 
-  } else if (!strcmp(str[0], "bne")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
-    bne_a(offset);
-
-  } else if (!strcmp(str[0], "bge")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
-    bge_a(offset);
-
-  } else if (!strcmp(str[0], "blt")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
-    blt_a(offset);
-
-  } else if (!strcmp(str[0], "bgt")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
-    bgt_a(offset);
-
-  } else if (!strcmp(str[0], "ble")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
-    ble_a(offset);
-
-  } else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) {
-    uint32_t res = addr_finder(labels, str[1]);
-    offset = (res - line_no) & OFFSET_MASK;
-    b_a(offset);
-
+    if (!strcmp(str[0], "beq")) {
+      beq_a(offset);
+    } else if (!strcmp(str[0], "bne")) {
+      bne_a(offset);
+    } else if (!strcmp(str[0], "bge")) {
+      bge_a(offset);
+    } else if (!strcmp(str[0], "blt")) {
+      blt_a(offset);
+    } else if (!strcmp(str[0], "bgt")) {
+      bgt_a(offset);
+    } else if (!strcmp(str[0], "ble")) {
+      ble_a(offset);
+    } else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) {
+      b_a(offset);
+    } else {
+      printf("Branch Error: Instruction not recognized");
+    }
   } else {
     Label lb;
     lb.name = str[0];
