@@ -8,9 +8,9 @@ struct registers branch(uint32_t instruction, struct registers regs) {
 
     if (extract_bits(offset, 25, 26) == 1) {
 	    printf("Enters\n");
-      int32_t new_offset = offset | SIGN_EXT_MASK;
+      int32_t new_offset = offset    // | SIGN_EXT_MASK;
     } else {
-      int32_t new_offset = offset
+      uint32_t new_offset = offset
     }
 
     uint32_t branched_instr_addr = *(regs.pc) + new_offset;
