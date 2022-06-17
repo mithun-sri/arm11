@@ -2,16 +2,16 @@
 #define DATA_PROCESSING_ASSEMBLE_H
 #include <stdint.h>
 
-#define MOV_OPCODE 0xd
-#define TST_OPCODE 0x8
-#define TEQ_OPCODE 0x9
-#define CMP_OPCODE 0xa
 #define AND_OPCODE 0x0
 #define EOR_OPCODE 0x1
 #define SUB_OPCODE 0x2
 #define RSB_OPCODE 0x3
 #define ADD_OPCODE 0x4
+#define TST_OPCODE 0x8
+#define TEQ_OPCODE 0x9
+#define CMP_OPCODE 0xa
 #define ORR_OPCODE 0xc
+#define MOV_OPCODE 0xd
 #define COND 0xe
 #define COND_OFFSET 28
 #define S_BIT_OFFSET 20
