@@ -55,6 +55,7 @@ Q - How do you generate rotate value? Is it ok to just say rotate == 0 each time
 #include "data_processing_assemble.c"
 #include "multiply_assembler.c"
 #include "special_assemble.c"
+#include "branch_assemble.c"
 
 #define MAX_CHARS 511
 
@@ -68,13 +69,26 @@ uint8_t get_val(char *str[MAX_CHARS], uint8_t pos) {
   return atoi(str[pos]);
 }
 
+uint32_t addr_finder(Label labels[MAX_CHARS], char str[]) {
+  for (int i = 0; i < MAX_CHARS; i++) {
+    if (labels[i].name == str) {
+      return labels[i].next_instr_addr;
+    }
+  }
+
+  printf("Label Error: Label not found");
+  exit(EXIT_FAILURE);
+}
+
 uint8_t tokenize(char instruction[], uint8_t line_no) {
   char *str[MAX_CHARS];
-  char delimit[] = " ,";
+  char delimit[] = " ,:";
   uint8_t i = 0;
-  struct Label labels[MAX_CHARS];
+
+  Label labels[MAX_CHARS];
   uint8_t numLabels = 0;
-  
+  int32_t offset;
+
   str[i] = strtok(instruction, delimit);
   while(str[i] != NULL) {
     i++;
@@ -112,7 +126,7 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
   } else if (!strcmp(str[0], "cmp")) {
     cmp_a(get_val(str, 1), get_val(str, 2));
 
-// multiply
+  // multiply
   } else if (!strcmp(str[0], "mul")) {
     mul_a(get_val(str, 1), get_val(str, 2), get_val(str, 3));
 
@@ -133,13 +147,49 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
   } else if (!strcmp(str[0], "lsl")) {
     lsl_a(get_val(str, 1), get_val(str, 2));
 
+  // branch
+  } else if (!strcmp(str[0], "beq")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    beq_a(offset);
+
+  } else if (!strcmp(str[0], "bne")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    bne_a(offset);
+
+  } else if (!strcmp(str[0], "bge")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    bge_a(offset);
+
+  } else if (!strcmp(str[0], "blt")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    blt_a(offset);
+
+  } else if (!strcmp(str[0], "bgt")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    bgt_a(offset);
+
+  } else if (!strcmp(str[0], "ble")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    ble_a(offset);
+
+  } else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) {
+    uint32_t res = addr_finder(labels, str[1]);
+    offset = res - line_no;
+    b_a(offset);
+
   } else {
     Label lb;
     lb.name = str[0];
     lb.next_instr_addr = line_no;
 
     labels[numLabels] = lb;
-    
+
     numLabels++;
 
     // do not increment when label found - syncs in main
@@ -160,7 +210,7 @@ int main(void) {
   fPtr = fopen("test.s", "r");
 
   if (fPtr == NULL) {
-    printf("File error: Unable to open file\n");
+    printf("File Error: Unable to open file\n");
     exit(EXIT_FAILURE);
   }
   while (&free) {
