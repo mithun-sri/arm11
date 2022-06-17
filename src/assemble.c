@@ -71,7 +71,9 @@ uint8_t get_val(char *str[MAX_CHARS], uint8_t pos) {
 uint8_t tokenize(char instruction[], uint8_t line_no) {
   char *str[MAX_CHARS];
   char delimit[] = " ,";
-  int i = 0;
+  uint8_t i = 0;
+  struct Label labels[MAX_CHARS];
+  uint8_t numLabels = 0;
   
   str[i] = strtok(instruction, delimit);
   while(str[i] != NULL) {
@@ -120,7 +122,7 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
   // single data transfer -- wait
   } else if (!strcmp(str[0], "ldr")) {
     // check parameter order
-    
+
   } else if (!strcmp(str[0], "str")) {
     // check parameter order
 
@@ -135,6 +137,10 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
     Label lb;
     lb.name = str[0];
     lb.next_instr_addr = line_no;
+
+    labels[numLabels] = lb;
+    
+    numLabels++;
 
     // do not increment when label found - syncs in main
     // printf("label : %d\n", line_no);
