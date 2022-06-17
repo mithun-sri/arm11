@@ -54,6 +54,7 @@ Q - How do you generate rotate value? Is it ok to just say rotate == 0 each time
 #include "emulate_architecture.h"
 #include "data_processing_assemble.c"
 #include "multiply_assembler.c"
+#include "special_assemble.c"
 
 #define MAX_CHARS 511
 
@@ -121,10 +122,12 @@ uint8_t tokenize(char instruction[], uint8_t line_no) {
     // check parameter order
   } else if (!strcmp(str[0], "str")) {
     // check parameter order
-  
-  // branch
-  } else if (!strcmp(str[0], "beq")) {
-    // wait
+
+  // special
+  } else if (!strcmp(str[0], "andeq")) {
+    andeq_a();
+  } else if (!strcmp(str[0], "lsl")) {
+    lsl_a(get_val(str, 1), get_val(str, 2));
   } else {
     Label lb;
     lb.name = str[0];
