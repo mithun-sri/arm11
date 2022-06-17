@@ -1,10 +1,6 @@
 #ifndef DATA_PROCESSING_ASSEMBLE_H
 #define DATA_PROCESSING_ASSEMBLE_H
-
-#include <stdio.h>
-#include <string.h>
-#include "emulate_architecture.h"
-#include "data_processing.h"
+#include <stdint.h>
 
 #define MOV_OPCODE 0xd
 #define TST_OPCODE 0x8
@@ -17,10 +13,15 @@
 #define ADD_OPCODE 0x4
 #define ORR_OPCODE 0xc
 #define COND 0xe
+#define COND_OFFSET 28
+#define S_BIT_OFFSET 20
 #define S_BIT_MASK (1 << S_BIT_OFFSET)
 #define I_BIT 0x1
+#define I_BIT_OFFSET 25
+#define RN_OFFSET 16
+#define RD_OFFSET 12
+#define OPCODE_OFFSET 21
 #define COMMON_DATA_PROCESSING_BITS ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET))
-#define MAX_CHARS 511 // no line is longer than 511 characters - spec
 
 uint32_t add_a(uint8_t rn, uint8_t rd, uint8_t op2);
 
