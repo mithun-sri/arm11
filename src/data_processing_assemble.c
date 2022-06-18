@@ -22,12 +22,12 @@ uint32_t and_a(uint8_t rn, uint8_t rd, uint8_t op2) {
 }
 
 uint32_t eor_a(uint8_t rn, uint8_t rd, uint8_t op2) {
-  return (COMMON_DATA_PROCESSING_BITS + (AND_OPCODE << OPCODE_OFFSET) 
+  return (COMMON_DATA_PROCESSING_BITS + (EOR_OPCODE << OPCODE_OFFSET) 
   + (rn << RN_OFFSET) + (rd << RD_OFFSET) + op2);
 }
 
 uint32_t orr_a(uint8_t rn, uint8_t rd, uint8_t op2) {
-  return (COMMON_DATA_PROCESSING_BITS + (AND_OPCODE << OPCODE_OFFSET) 
+  return (COMMON_DATA_PROCESSING_BITS + (ORR_OPCODE << OPCODE_OFFSET) 
   + (rn << RN_OFFSET) + (rd << RD_OFFSET) + op2);
 }
 
