@@ -14,5 +14,7 @@
 
 uint32_t big_endian_to_little_endian(uint32_t big_endian);
 
+uint32_t little_endian_to_big_endian(uint32_t big_endian);
+
 char *binary_int_to_chars(uint32_t little_endian);
 
