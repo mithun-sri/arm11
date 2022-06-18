@@ -121,23 +121,14 @@ Result tokenize(char instruction[], uint8_t line_no) {
     uint32_t addr = addr_finder(labels, str[1]);
     offset = (addr - line_no) & OFFSET_MASK;
 
-    if (!strcmp(str[0], "beq")) {
-      res = beq_a(offset);
-    } else if (!strcmp(str[0], "bne")) {
-      res = bne_a(offset);
-    } else if (!strcmp(str[0], "bge")) {
-      res = bge_a(offset);
-    } else if (!strcmp(str[0], "blt")) {
-      res = blt_a(offset);
-    } else if (!strcmp(str[0], "bgt")) {
-      res = bgt_a(offset);
-    } else if (!strcmp(str[0], "ble")) {
-      res = ble_a(offset);
-    } else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) {
-      res = b_a(offset);
-    } else {
-      printf("Branch Error: Instruction not recognized");
-    }
+    if (!strcmp(str[0], "beq")) { res = beq_a(offset); }
+    else if (!strcmp(str[0], "bne")) { res = bne_a(offset); }
+    else if (!strcmp(str[0], "bge")) { res = bge_a(offset); }
+    else if (!strcmp(str[0], "blt")) { res = blt_a(offset); }
+    else if (!strcmp(str[0], "bgt")) { res = bgt_a(offset); }
+    else if (!strcmp(str[0], "ble")) { res = ble_a(offset); }
+    else if (!strcmp(str[0], "bal") || !strcmp(str[0], "b")) { res = b_a(offset); }
+    else { printf("Branch Error: Instruction not recognized"); }
   } else {
     Label lb;
     lb.name = str[0];
@@ -178,7 +169,8 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  while (fgets(instruction, sizeof(instruction), fReadPtr) != NULL) {
+  while (&free) {
+    if (fgets(instruction, sizeof(instruction), fReadPtr) != NULL) {
       Result curr = tokenize(instruction, cnt);
       char *res = curr.res;
       printf("%s\n", res);
@@ -187,16 +179,17 @@ int main(int argc, char *argv[]) {
       cnt = cntSyncer;
       cnt++;
       free(res);
+
+    } else {
+      if (feof(fReadPtr)) {
+        exit(EXIT_SUCCESS);
+
+      }
+      printf("File Error: Unable to read file\n");
+      exit(EXIT_FAILURE);
+    } 
   }
-  
-  if (feof(fReadPtr)) {
-    fclose(fReadPtr);
-    fclose(fWritePtr);
-    exit(EXIT_SUCCESS);
-  } else {
-    fclose(fReadPtr);
-    fclose(fWritePtr);
-    printf("File Error: Unable to read file\n");
-    exit(EXIT_FAILURE);
-  } 
+
+  fclose(fReadPtr);
+  fclose(fWritePtr);
 }
