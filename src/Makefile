@@ -8,7 +8,7 @@ LDLIBS  = -lm
 
 all: assemble emulate
 
-assemble: assemble.o
+assemble: assemble.o data_processing_assemble.o multiply_assembler.o special_assemble.o branch_assembler.o assemble_utilities.o
 
 emulate: emulate.o choose_instruction.o emulate_utilities.o data_processing.o single_data_transfer.o multiply.o branch.o
 
