@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.hs": "haskell",
+        "single_data_transfer_assemble.h": "c",
+        "stdlib.h": "c"
+    }
+}

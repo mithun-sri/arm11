@@ -7,6 +7,7 @@
 #include "special_assemble.h"
 #include "branch_assembler.h"
 #include "assemble_utilities.h"
+#include "single_data_transfer_assemble.h"
 
 #define MAX_CHARS 0x1ff
 #define OFFSET_MASK 0xffffff
@@ -18,7 +19,7 @@ typedef struct {
 } Label;
 
 typedef struct {
-  uint8_t line_no;
+  int line_no;
   char *res;
 } Result;
 
@@ -46,7 +47,7 @@ uint8_t startsWith(char *str1, char *str2) {
 }
 
 // splits instructions into segments and passes in the right parameters for each function
-Result tokenize(char instruction[], uint8_t line_no) {
+Result tokenize(char instruction[], int line_no) {
   char *str[MAX_CHARS];
   char delimit[] = " ,:";
   uint8_t i = 0;
@@ -62,6 +63,8 @@ Result tokenize(char instruction[], uint8_t line_no) {
   while(str[i] != NULL) {
     i++;
     str[i] = strtok(NULL, delimit);
+    if (str[i] != NULL){
+    }
   }
 
   // data_processing
@@ -104,7 +107,7 @@ Result tokenize(char instruction[], uint8_t line_no) {
 
   // single data transfer -- wait
   } else if (!strcmp(str[0], "ldr")) {
-    // check parameter order
+    res = ldr_a(str);
 
   } else if (!strcmp(str[0], "str")) {
     // check parameter order
@@ -142,7 +145,7 @@ Result tokenize(char instruction[], uint8_t line_no) {
     result.res = binary_int_to_chars(big_endian_to_little_endian(line_no));
     result.line_no -= 1;
   }
-  result.res = binary_int_to_chars(big_endian_to_little_endian(res));
+  result.res = binary_int_to_chars(little_endian_to_big_endian(res));
 
   return result;
 }
@@ -151,9 +154,10 @@ int main(int argc, char *argv[]) {
   assert(argc == 3);
 
   char instruction[511];
-  uint8_t cnt;
+  int cnt;
   FILE *fReadPtr;
   FILE *fWritePtr;
+  ldr_buffer = malloc(sizeof(uint32_t) * 12);
 
 // "test.s" is the name of the test file
   fReadPtr = fopen(argv[1], "r");
@@ -169,27 +173,31 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  while (&free) {
-    if (fgets(instruction, sizeof(instruction), fReadPtr) != NULL) {
+  while (fgets(instruction, sizeof(instruction), fReadPtr) != NULL) {
       Result curr = tokenize(instruction, cnt);
       char *res = curr.res;
-      printf("%s\n", res);
-      fwrite(res, NUMBER_OF_INSTRUCTION_BITS, 1, fWritePtr);
+      char temp[MAX_CHARS];
+      char output[1000];
+      sprintf(temp, "%llx", strtoll(res, NULL, 2));
+      sprintf(output, "%0*d%s", (int) (8 - strlen(temp)), 0, temp);
+      printf("%s\n", output);
+      fwrite(output, 9 , 1, fWritePtr);
       uint8_t cntSyncer = curr.line_no;
       cnt = cntSyncer;
       cnt++;
       free(res);
-
-    } else {
-      if (feof(fReadPtr)) {
-        exit(EXIT_SUCCESS);
-
-      }
-      printf("File Error: Unable to read file\n");
-      exit(EXIT_FAILURE);
-    } 
   }
+  for (uint32_t i = 0; ldr_buffer[i]; i++){
+  }
+  free(ldr_buffer);
 
-  fclose(fReadPtr);
-  fclose(fWritePtr);
-}
+  if (feof(fReadPtr)) {
+    fclose(fReadPtr);
+    fclose(fWritePtr);
+    exit(EXIT_SUCCESS);
+  } else {
+    fclose(fReadPtr);
+    fclose(fWritePtr);
+    printf("File Error: Unable to read file\n");
+    exit(EXIT_FAILURE);
+ }}

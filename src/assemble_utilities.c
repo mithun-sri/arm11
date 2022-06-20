@@ -8,10 +8,10 @@ uint32_t big_endian_to_little_endian(uint32_t big_endian) {
 }
 
 uint32_t little_endian_to_big_endian(uint32_t little_endian){
-    return (((num & 0x000000ff) << 24u)
-        |  ((num & 0x0000ff00) << 8u)
-        |  ((num & 0x00ff0000) >> 8u)  
-        |  ((num & 0xff000000) >> 24u));
+    return (((little_endian & 0x000000ff) << 24u)
+        |  ((little_endian & 0x0000ff00) << 8u)
+        |  ((little_endian & 0x00ff0000) >> 8u)  
+        |  ((little_endian & 0xff000000) >> 24u));
 }
 
 char *binary_int_to_chars(uint32_t little_endian) {
@@ -28,3 +28,5 @@ char *binary_int_to_chars(uint32_t little_endian) {
     }
     return binary_number;
 }
+
+uint32_t* ldr_buffer;
