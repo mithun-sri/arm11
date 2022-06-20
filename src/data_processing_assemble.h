@@ -39,7 +39,7 @@ uint32_t mov_a(uint8_t rd, char* op2);
 
 uint32_t tst_a(uint8_t rn, char* op2);
 
-uint32_t teq_a(uint8_t rn, uint8_t op2);
+uint32_t teq_a(uint8_t rn, char* op2);
 
 uint32_t cmp_a(uint8_t rn, char* op2);
 

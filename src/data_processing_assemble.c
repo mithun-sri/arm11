@@ -131,7 +131,7 @@ uint32_t orr_a(uint8_t rn, uint8_t rd, char* op2) {
 }
 
 uint32_t mov_a(uint8_t rd, char* op2) { 
-	// printf("Mov op2: %i", op2);
+	printf("Mov op2: %s", op2);
   uint8_t val;
   printf("%s\n", op2);
   if (strncmp(op2, "0x", 2) == 0){
@@ -143,7 +143,8 @@ uint32_t mov_a(uint8_t rd, char* op2) {
       sscanf((op2 + 1), "%hhx", &val);
       return ((0xE << 28) | (0xD << 21) | (rd << 12) | val);
   } else {
-    sscanf(op2, "%hhx", &val);
+    val = atoi(op2);
+    // printf("%i\n", val);
     return ((0xE << 28) | (1 << 25) | (0xD << 21) | (rd << 12) | val);
     // Immediate operand
   }
@@ -172,9 +173,24 @@ uint32_t tst_a(uint8_t rn, char* op2) {
   // + S_BIT_MASK + (rn << RN_OFFSET) + op2); 
 }
 
-uint32_t teq_a(uint8_t rn, uint8_t op2) {
-  return (COMMON_DATA_PROCESSING_BITS + (TEQ_OPCODE << OPCODE_OFFSET) 
-  + S_BIT_MASK + (rn << RN_OFFSET) + op2); 
+uint32_t teq_a(uint8_t rn, char* op2) {
+  uint8_t val;
+  printf("%s\n", op2);
+  if (strncmp(op2, "0x", 2) == 0){
+    // Hex operand
+	  sscanf((op2 + 2), "%hhx", &val);
+    return ((0xE << 28) | (1 << 25) | (0x9 << 21) | (rn << 16) | val);
+  } else if (strncmp(op2, "r", 1) == 0) {
+    // Register operand
+      sscanf((op2 + 1), "%hhx", &val);
+      return ((0xE << 28) | (0x9 << 21) | (rn << 16) | val);
+  } else {
+    sscanf(op2, "%hhx", &val);
+    return ((0xE << 28) | (1 << 25) | (0x9 << 21) | (rn << 16) | val);
+    // Immediate operand
+  }
+  // return (COMMON_DATA_PROCESSING_BITS + (TEQ_OPCODE << OPCODE_OFFSET) 
+  // + S_BIT_MASK + (rn << RN_OFFSET) + op2); 
 }
 
 uint32_t cmp_a(uint8_t rn, char* op2) {

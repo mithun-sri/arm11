@@ -88,9 +88,7 @@ Result tokenize(char instruction[], int line_no) {
   } else if (!strcmp(str[0], "tst")) {
     res = tst_a(get_val(str, 1), str[2]);
   } else if (!strcmp(str[0], "teq")) {
-    uint8_t val;
-	  sscanf(str[2], "%hhx", &val);
-    res = teq_a(get_val(str, 1), val);
+    res = teq_a(get_val(str, 1), str[2]);
   } else if (!strcmp(str[0], "cmp")) {
     res = cmp_a(get_val(str, 1), str[2]);
   // multiply
