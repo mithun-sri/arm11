@@ -23,24 +23,24 @@
 #define OPCODE_OFFSET 21
 #define COMMON_DATA_PROCESSING_BITS ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET))
 
-uint32_t add_a(uint8_t rn, uint8_t rd, uint8_t op2);
+uint32_t add_a(uint8_t rn, uint8_t rd, char* op2);
 
-uint32_t sub_a(uint8_t rn, uint8_t rd, uint8_t op2);
+uint32_t sub_a(uint8_t rn, uint8_t rd, char* op2);
 
-uint32_t rsb_a(uint8_t rn, uint8_t rd, uint8_t op2);
+uint32_t rsb_a(uint8_t rn, uint8_t rd, char* op2);
 
-uint32_t and_a(uint8_t rn, uint8_t rd, uint8_t op2);
+uint32_t and_a(uint8_t rn, uint8_t rd, char* op2);
 
-uint32_t eor_a(uint8_t rn, uint8_t rd, uint8_t op2);
+uint32_t eor_a(uint8_t rn, uint8_t rd, char* op2);
 
-uint32_t orr_a(uint8_t rn, uint8_t rd, uint8_t op2);
+uint32_t orr_a(uint8_t rn, uint8_t rd, char* op2);
 
-uint32_t mov_a(uint8_t rd, uint8_t op2);
+uint32_t mov_a(uint8_t rd, char* op2);
 
-uint32_t tst_a(uint8_t rn, uint8_t op2);
+uint32_t tst_a(uint8_t rn, char* op2);
 
 uint32_t teq_a(uint8_t rn, uint8_t op2);
 
-uint32_t cmp_a(uint8_t rn, uint8_t op2);
+uint32_t cmp_a(uint8_t rn, char* op2);
 
 #endif

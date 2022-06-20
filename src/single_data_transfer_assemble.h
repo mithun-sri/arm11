@@ -9,6 +9,8 @@
 
 uint32_t ldr_a(char** address);
 
+uint32_t str_a(char** address);
+
 uint32_t find_up_bit(int8_t offset);
 
 #endif

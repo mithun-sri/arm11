@@ -64,66 +64,54 @@ Result tokenize(char instruction[], int line_no) {
     i++;
     str[i] = strtok(NULL, delimit);
     if (str[i] != NULL){
+	    if (strncmp(str[i], "#", 1) == 0){
+		    str[i] += 1;
+	    }
     }
   }
 
   // data_processing
   if (!strcmp(str[0], "mov")) {
-    res = mov_a(get_val(str, 1), get_val(str, 2));
-
+    res = mov_a(get_val(str, 1), str[2]);
   } else if (!strcmp(str[0], "add")) {
-    res = add_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
-
+    res = add_a(get_val(str, 2), get_val(str, 1), str[3]);
   } else if (!strcmp(str[0], "sub")) {
-    res = sub_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
-
+    res = sub_a(get_val(str, 2), get_val(str, 1), str[3]);
   } else if (!strcmp(str[0], "rsb")) {
-    res = rsb_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
-
+    res = rsb_a(get_val(str, 2), get_val(str, 1), str[3]);
   } else if (!strcmp(str[0], "and")) {
-    res = and_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
-
+    res = and_a(get_val(str, 2), get_val(str, 1), str[3]);
   } else if (!strcmp(str[0], "eor")) {
-    res = eor_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
-
+    res = eor_a(get_val(str, 2), get_val(str, 1), str[3]);
   } else if (!strcmp(str[0], "orr")) {
-    res = orr_a(get_val(str, 2), get_val(str, 1), get_val(str, 3));
-
+    res = orr_a(get_val(str, 2), get_val(str, 1), str[3]);
   } else if (!strcmp(str[0], "tst")) {
-    res = tst_a(get_val(str, 1), get_val(str, 2));
-
+    res = tst_a(get_val(str, 1), str[2]);
   } else if (!strcmp(str[0], "teq")) {
-    res = teq_a(get_val(str, 1), get_val(str, 2));
-
+    uint8_t val;
+	  sscanf(str[2], "%hhx", &val);
+    res = teq_a(get_val(str, 1), val);
   } else if (!strcmp(str[0], "cmp")) {
-    res = cmp_a(get_val(str, 1), get_val(str, 2));
-
+    res = cmp_a(get_val(str, 1), str[2]);
   // multiply
   } else if (!strcmp(str[0], "mul")) {
     res = mul_a(get_val(str, 1), get_val(str, 2), get_val(str, 3));
-
   } else if (!strcmp(str[0], "mla")) {
     res = mla_a(get_val(str, 1), get_val(str, 2), get_val(str, 3), get_val(str, 4));
-
   // single data transfer -- wait
   } else if (!strcmp(str[0], "ldr")) {
     res = ldr_a(str);
-
   } else if (!strcmp(str[0], "str")) {
-    // check parameter order
-
+    res = str_a(str);
   // special
   } else if (!strcmp(str[0], "andeq")) {
     res = andeq_a();
-
   } else if (!strcmp(str[0], "lsl")) {
     res = lsl_a(get_val(str, 1), get_val(str, 2));
-
   // branch
   } else if (startsWith(str[0], "b")) {
     uint32_t addr = addr_finder(labels, str[1]);
     offset = (addr - line_no) & OFFSET_MASK;
-
     if (!strcmp(str[0], "beq")) { res = beq_a(offset); }
     else if (!strcmp(str[0], "bne")) { res = bne_a(offset); }
     else if (!strcmp(str[0], "bge")) { res = bge_a(offset); }
@@ -136,9 +124,7 @@ Result tokenize(char instruction[], int line_no) {
     Label lb;
     lb.name = str[0];
     lb.next_instr_addr = line_no;
-
     labels[numLabels] = lb;
-
     numLabels++;
 
     // do not increment when label found - syncs in main
@@ -161,7 +147,7 @@ int main(int argc, char *argv[]) {
 
 // "test.s" is the name of the test file
   fReadPtr = fopen(argv[1], "r");
-  fWritePtr = fopen(argv[2], "a");
+  fWritePtr = fopen(argv[2], "wb");
 
   if (fReadPtr == NULL) {
     printf("File Error: Unable to open file\n");
@@ -176,18 +162,19 @@ int main(int argc, char *argv[]) {
   while (fgets(instruction, sizeof(instruction), fReadPtr) != NULL) {
       Result curr = tokenize(instruction, cnt);
       char *res = curr.res;
-      char temp[MAX_CHARS];
-      char output[1000];
-      sprintf(temp, "%llx", strtoll(res, NULL, 2));
-      sprintf(output, "%0*d%s", (int) (8 - strlen(temp)), 0, temp);
-      printf("%s\n", output);
-      fwrite(output, 9 , 1, fWritePtr);
+      unsigned char buffer[4];
+      uint32_t number = strtoll(res, NULL, 2);
+
+      buffer[0] = (unsigned char) (number >> 24);
+      buffer[1] = number >> 16;
+      buffer[2] = number >> 8;
+      buffer[3] = number;
+     
+      fwrite(buffer, sizeof(buffer) , 1, fWritePtr);
       uint8_t cntSyncer = curr.line_no;
       cnt = cntSyncer;
       cnt++;
       free(res);
-  }
-  for (uint32_t i = 0; ldr_buffer[i]; i++){
   }
   free(ldr_buffer);
 
