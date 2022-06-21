@@ -60,7 +60,8 @@ void setup_borders(void) {
 void player_move(void) {
     // sleeps for 50000 microseconds or 0.05 seconds, sleep() rounds down to 0
     usleep(50000);
-    switch (getchar()) {
+    char move = getchar();
+    switch (move) {
         case 'a': y_current--; break;
         case 's': x_current++; break;
         case 'd': y_current++; break;
