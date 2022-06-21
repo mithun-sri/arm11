@@ -24,8 +24,8 @@ void input_board_dimension(void) {
 
 void initial_food(void) {
 // x_food and y_food indicate the current position of the food item
-    x_food = (rand() % (board_width - 1)) + 1;
-    y_food = (rand() % (board_height - 1)) + 1;
+    x_food = (rand() % (board_height - 1)) + 1;
+    y_food = (rand() % (board_width - 1)) + 1;
 }
 
 
@@ -77,8 +77,8 @@ void player_move(void) {
 
     if (x_current == x_food && y_current == y_food) {
     // new food item generated
-        x_food = (rand() % (board_width - 1)) + 1;
-        y_food = (rand() % (board_height - 1)) + 1;
+        x_food = (rand() % (board_height - 1)) + 1;
+        y_food = (rand() % (board_width - 1)) + 1;
         score++;
     }
 
