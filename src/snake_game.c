@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
+uint8_t lost_game = 0;
 uint8_t end_of_game = 0;
 uint8_t first_turn = 1;
 uint8_t score = 0;
@@ -12,6 +12,7 @@ int board_height;
 int board_width;
 uint8_t x_food;
 uint8_t y_food;
+uint8_t debugSignal = 0;
 
 
 void input_board_dimension(void) {
@@ -24,21 +25,24 @@ void input_board_dimension(void) {
 
 void initial_food(void) {
 // x_food and y_food indicate the current position of the food item
-    x_food = (rand() % (board_height - 1)) + 1;
-    y_food = (rand() % (board_width - 1)) + 1;
+  label1:
+    x_food = (rand() % (board_height - 2)) + 1;
+    y_food = (rand() % (board_width - 2)) + 1;
+    if (x_food == 1 && y_food == 1) {
+      goto label1;
+    }
 }
 
 
 void setup_borders(void) {
 // "clear" clears the screen
     system("clear");
-    // scoreboard
     printf("#######  Score: %d  #######\n\n", score);
 
     for (uint8_t i = 0; i < board_height; ++i) {
         for (uint8_t j = 0; j < board_width; ++j) {
             if (i == 0 || j == 0 || i == board_width - 1 || j == board_height - 1) {
-                printf("=");
+                printf("#");
             }
             else {
                 if (i == x_food && j == y_food) {
@@ -54,32 +58,37 @@ void setup_borders(void) {
         }
         printf("\n");
     }
+    printf("Use w,a,s,d to move and q to quit.\n");
 }
 
 
 void player_move(void) {
-    // sleeps for 50000 microseconds or 0.05 seconds, sleep() rounds down to 0
-    usleep(50000);
+
+
     char move = getchar();
     switch (move) {
         case 'a': y_current--; break;
         case 's': x_current++; break;
         case 'd': y_current++; break;
         case 'w': x_current--; break;
-        // pressing any other key ends game
-        default: end_of_game = 1;
+        case 'q': end_of_game = 1; break;
     }
 
     // if snake goes out of borders
-    if (x_current < 0 || x_current > board_height \
-    || y_current < 0 || y_current > board_width) {
-        end_of_game = 1;
+    if (x_current <= 0 || x_current >= board_height - 1
+    || y_current <= 0 || y_current >= board_width - 1) {
+       lost_game = 1;
+       end_of_game = 1;
     }
 
     if (x_current == x_food && y_current == y_food) {
     // new food item generated
-        x_food = (rand() % (board_height - 1)) + 1;
-        y_food = (rand() % (board_width - 1)) + 1;
+      label2:
+        x_food = (rand() % (board_height - 2)) + 1;
+        y_food = (rand() % (board_width - 2)) + 1;
+        if (x_food == x_current && y_food == y_current) {
+          goto label2;
+        }
         score++;
     }
 
@@ -95,6 +104,10 @@ int main(void) {
         player_move();
     }
 
-    printf("Game over!\n");
+    if (lost_game) {
+      printf("Game over. You crashed into a wall.\n");
+    }
+
+    printf("Thanks for playing. You scored %i point(s).\n", score);
     return 0;
 }
