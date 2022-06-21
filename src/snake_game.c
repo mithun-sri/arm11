@@ -5,7 +5,7 @@
 
 bool end_of_game = false;
 int score = 0;
-int x_current = 1;       // x_head and y_head indicate the current position of the head
+int x_current = 1;       // x_current and y_current indicate the current position of the head
 int y_current = 1;
 int board_height;
 int board_width;
