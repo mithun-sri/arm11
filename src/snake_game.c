@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
 
 uint8_t lost_game = 0;
 uint8_t end_of_game = 0;
@@ -58,13 +60,17 @@ void setup_borders(void) {
         }
         printf("\n");
     }
-    printf("Use w,a,s,d to move and q to quit.\n");
+    printf("Use w,a,s,d to move or press q to quit.\n");
 }
 
 
 void player_move(void) {
 
-
+    static struct termios old_val, new_val;
+    tcgetattr(STDIN_FILENO, &old_val);
+    new_val = old_val;
+    new_val.c_lflag &= ~(ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_val);
     char move = getchar();
     switch (move) {
         case 'a': y_current--; break;
@@ -73,6 +79,7 @@ void player_move(void) {
         case 'w': x_current--; break;
         case 'q': end_of_game = 1; break;
     }
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_val);
 
     // if snake goes out of borders
     if (x_current <= 0 || x_current >= board_height - 1
@@ -105,9 +112,9 @@ int main(void) {
     }
 
     if (lost_game) {
-      printf("Game over. You crashed into a wall.\n");
+      printf("\nGame over. You crashed into a wall.");
     }
 
-    printf("Thanks for playing. You scored %i point(s).\n", score);
+    printf("\nThanks for playing. You scored %i point(s).\n", score);
     return 0;
 }
