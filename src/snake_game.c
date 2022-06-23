@@ -2,27 +2,31 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <time.h>
 
-uint8_t lost_game = 0;
-uint8_t end_of_game = 0;
-uint8_t first_turn = 1;
-uint8_t score = 0;
+
+unsigned int game_mode;
+unsigned int lost_game = 0;
+unsigned int end_of_game = 0;
+unsigned int first_turn = 1;
+unsigned int score = 0;
 // x_current and y_current indicate the current position of the head
-uint8_t x_current = 1;
-uint8_t y_current = 1;
-int board_height;
-int board_width;
-uint8_t x_food;
-uint8_t y_food;
-uint8_t debugSignal = 0;
+unsigned int x_current = 1;
+unsigned int y_current = 1;
+unsigned int board_height;
+unsigned int board_width;
+unsigned int x_food;
+unsigned int y_food;
 
 
-void input_board_dimension(void) {
+void input_boardsize_and_mode(void) {
 // allows the user to choose board dimensions
     printf("Input width of the board: ");
     scanf("%d", &board_width);
     printf("Input height of the board: ");
     scanf("%d", &board_height);
+    printf("Enter 1 for high score mode or 2 for fastest to ten mode: ");
+    scanf("%i", &game_mode);
 }
 
 void initial_food(void) {
@@ -103,18 +107,36 @@ void player_move(void) {
 
 
 int main(void) {
-    input_board_dimension();
+    input_boardsize_and_mode();
     initial_food();
+    clock_t t;
+    int f;
+    t = clock();
     
+    if (game_mode == 1) {
+      goto label3;
+    }
+    
+
+    while(!end_of_game && score < 10) {
+      setup_borders();
+        player_move();
+        t = clock() - t;
+    }
+    goto label4;
+    
+  label3:
     while (!end_of_game) {
         setup_borders();
         player_move();
+        t = clock() - t;
     }
 
+  label4:
     if (lost_game) {
       printf("\nGame over. You crashed into a wall.");
     }
 
-    printf("\nThanks for playing. You scored %i point(s).\n", score);
+    printf("\nThanks for playing. You scored %i point(s) in %.1lf seconds.\n\n", score, ((double) t/1000));
     return 0;
 }
