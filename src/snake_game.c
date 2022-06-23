@@ -22,9 +22,9 @@ unsigned int y_food;
 
 void input_boardsize_and_mode(void) {
 // allows the user to choose board dimensions
-    printf("Input width of the board: ");
+    printf("Input width of the board (minimum 4): ");
     scanf("%d", &board_width);
-    printf("Input height of the board: ");
+    printf("Input height of the board (minimum 4): ");
     scanf("%d", &board_height);
     printf("Enter 1 for high score mode or 2 for fastest to ten mode: ");
     scanf("%i", &game_mode);
