@@ -3,6 +3,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdint.h>
 
 
 unsigned int game_mode;
