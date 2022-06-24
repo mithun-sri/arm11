@@ -21,7 +21,7 @@
 #define RN_OFFSET 16
 #define RD_OFFSET 12
 #define OPCODE_OFFSET 21
-#define COMMON_DATA_PROCESSING_BITS ((COND << COND_OFFSET) + (I_BIT << I_BIT_OFFSET))
+#define COND_CODE (COND << COND_OFFSET)
 
 uint32_t add_a(uint8_t rn, uint8_t rd, char* op2);
 

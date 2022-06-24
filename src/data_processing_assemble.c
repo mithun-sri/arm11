@@ -11,15 +11,15 @@ uint32_t add_a(uint8_t rn, uint8_t rd, char* op2) {
   if (strncmp(op2, "0x", 2) == 0){
     // Hex operand
 	  sscanf((op2 + 2), "%hhx", &val);
-    return ((0xE << 28) | (1 << 25) | (0x4 << 21) |(rn << 16)| (rd << 12) | val);
+    return (COND_CODE | (1 << I_BIT_OFFSET) | (0x4 << OPCODE_OFFSET) |(rn << RN_OFFSET)| (rd << RD_OFFSET) | val);
   } else if (strncmp(op2, "r", 1) == 0) {
     // Register operand
       sscanf((op2 + 1), "%hhx", &val);
-      return ((0xE << 28) | (rn << 16) | (0x4 << 21) |(rd << 12) | val);
+      return (COND_CODE | (rn << RN_OFFSET) | (0x4 << OPCODE_OFFSET) |(rd << RD_OFFSET) | val);
   } else {
-    sscanf(op2, "%hhx", &val);
-    return ((0xE << 28) | (1 << 25)| (rn << 16) |(0x4 << 21) | (rd << 12) | val);
     // Immediate operand
+    sscanf(op2, "%hhx", &val);
+    return (COND_CODE | (1 << I_BIT_OFFSET)| (rn << RN_OFFSET) |(0x4 << OPCODE_OFFSET) | (rd << RD_OFFSET) | val);
   }
 
   //return (COMMON_DATA_PROCESSING_BITS + (ADD_OPCODE << OPCODE_OFFSET)
