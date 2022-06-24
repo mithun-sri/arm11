@@ -1,6 +1,8 @@
 \documentclass[11pt]{article}
 
 \usepackage{fullpage}
+\usepackage{graphicx}
+\graphicspath{ {./assets/assembler_diagram.jpeg/} }
 
 \begin{document}
 
@@ -10,6 +12,9 @@
 \maketitle
 
 \section{Assembler}
+\begin{center}
+    \includegraphics[scale=0.55]{assets/assembler_diagram.jpeg}
+\end{center}
 \subsection{Implementation strategy}
 We felt we structured the emulator's code well; we could find any instruction or function easily. So, we decided to use the same approach for the assembler. We created a separate source and associated header file for each instruction type described in the specification. Each file contains functions for each operation the instruction needs to support. 
 
