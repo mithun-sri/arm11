@@ -105,7 +105,7 @@ Result tokenize(char instruction[], int line_no) {
   } else if (!strcmp(str[0], "andeq")) {
     res = andeq_a();
   } else if (!strcmp(str[0], "lsl")) {
-    res = lsl_a(get_val(str, 1), get_val(str, 2));
+    res = lsl_a(str);
   // branch
   } else if (startsWith(str[0], "b")) {
     uint32_t addr = addr_finder(labels, str[1]);

@@ -3,6 +3,16 @@
         "*.hs": "haskell",
         "single_data_transfer_assemble.h": "c",
         "stdlib.h": "c",
-        "assemble_utilities.h": "c"
+        "assemble_utilities.h": "c",
+        "data_processing.h": "c",
+        "optional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "system_error": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }
