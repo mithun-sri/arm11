@@ -28,16 +28,12 @@ uint32_t ldr_a(char** str){
     if (str[3] == NULL){
         // Pre-index without offset or immediate
         // printf("Pre-index without offset or immediate\n");
-        printf("rd: %s\n", str[1]);
         if (strncmp(str[2], "[", 1) == 0){
             // Pre-index without offset
-            printf("%s\n", str[2]);
             char* value_str = str[2];
             value_str[strlen(value_str) - 2] = '\0';
-            printf("%s\n", value_str);
             value_str += 1;
             uint32_t rn = atoi(value_str + 1) << 16;
-            // printf("rn: %s", value_str + 1);
             uint32_t rd = atoi(str[1] + 1) << 12;
             uint32_t cond = 0xE << 28;
             uint32_t standard_bits = 1 << 26;
@@ -54,7 +50,6 @@ uint32_t ldr_a(char** str){
             if (strncmp(value_str, "=", 1) == 0){
                 // Hex value
                 val = strtol(value_str + 1, NULL, 16);
-                
             } else {
                 val = atoi(value_str + 1);
             }
@@ -76,24 +71,17 @@ uint32_t ldr_a(char** str){
             
         }
     } else {
-        printf("Pre-index with offset or post-index\n");
-        printf("Str[3]: %s\n", str[3]);
         char* val_str = str[3];
         if (val_str[strlen(val_str) - 2] == ']'){
             // Pre-index with offset
-            printf("Pre-index with offset\n");
             val_str[strlen(val_str) - 2] = '\0';
             int32_t s_offset;
             if (strncmp(val_str, "0x", 2) == 0){
                 // Hex
-                printf("Hex\n");
                 s_offset = strtol(&val_str[2], NULL, 16);
             } else {
                 // Immediate
-                printf("Immediate\n");
-                printf("s: %s", val_str);
                 s_offset = atoi(val_str);
-                // printf("Offset: %i\n", s_offset);
             }
             uint32_t u_bit;
             if (val_str[0] == '-'){
@@ -103,7 +91,6 @@ uint32_t ldr_a(char** str){
             } else {
                 u_bit = 1 << 23;
             }
-            printf("rn : %s", str[2] + 2);
             uint32_t rn = atoi(str[2] + 2) << 16;
             uint32_t rd = atoi(str[1] + 1) << 12;
             uint32_t cond = 0xE << 28;
@@ -114,8 +101,20 @@ uint32_t ldr_a(char** str){
             uint32_t offset = s_offset;
             return (rn | rd | cond | standard_bits | i_bit | p_bit | l_bit | offset | u_bit);
         } else {
-            printf("Post-index\n");
             // Post-index
+            uint32_t offset = atoi(str[3]);
+            uint32_t i_bit = 1 << 25;
+            uint32_t l_bit = 1 << 20;
+            char* rn_str = str[2] + 2;
+            uint32_t rn = atoi(rn_str) << 16;
+            uint32_t cond = 0xE << 28;
+            uint32_t p_bit = 0 << 24;
+            uint32_t u_bit = 1 << 23;
+            int rd = atoi(str[1] + 1);
+            rd <<= 12;
+            uint32_t rd_mask = *(uint32_t*)&rd;
+            uint32_t res = (p_bit | i_bit | cond | u_bit | l_bit | rn | rd_mask | offset | (1 << 26));
+            return res;
         }
     }
     return 0;
@@ -131,7 +130,6 @@ uint32_t str_a(char** str){
     char *end;
     if (str[3] == NULL){
         // Pre-index without offset
-        printf("Post indexed\n");
         char* rn_str = str[2] + 2;
         uint32_t rn = atoi(rn_str) << 16;
         char *offset_str = str[3] + 1;
@@ -156,9 +154,7 @@ uint32_t str_a(char** str){
         if ((end = strstr(str[3], "]")) != NULL){
             end++;
                 // Pre-indexed with offset
-		        printf("Pre-indexed with offset\n");
                 char* rn_str = str[2] + 2;
-                printf("rn_str: %s\n", rn_str);
                 uint32_t rn = atoi(rn_str) << 16;
                 p_bit = 1 << 24;
                 u_bit = 1 << 23;
@@ -176,7 +172,6 @@ uint32_t str_a(char** str){
                 return res;
             }  else {
             // Post-indexed
-                printf("%s\n", str[3]);
                 uint32_t offset = atoi(str[3]);
                 char* rn_str = str[2] + 2;
                 uint32_t rn = atoi(rn_str) << 16;
