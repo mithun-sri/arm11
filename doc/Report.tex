@@ -1,21 +1,97 @@
 \documentclass[11pt]{article}
 
 \usepackage{fullpage}
+\usepackage{graphicx}
+\graphicspath{ {./assets/assembler_diagram.jpeg/} }
 
 \begin{document}
 
-\title{Our Extension...}
-\author{TODO}
+\title{C Project Extension}
+\author{Shweta Banerjee, Taeho Kim, Mithun Sri, Devin Fernando}
 
 \maketitle
 
-\section{Introduction}
+\section{Assembler}
+\begin{center}
+    \includegraphics[scale=0.55]{assets/assembler_diagram.jpeg}
+\end{center}
+\subsection{Implementation strategy}
+We felt we structured the emulator's code well; we could find any instruction or function easily. So, we decided to use the same approach for the assembler. We created a separate source and associated header file for each instruction type described in the specification. Each file contains functions for each operation the instruction needs to support. 
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+The assemble\_utilities.c file and the associated assemble\_utilities.h file store functions required by most other instructions, and they serve as tools to simplify complex processes (e.g. tokenizer). We had agreed to bring forward this idea of creating a utility file from the emulator as it reduces code duplication and improves efficiency. 
+
+We wrote the main tokenize() function in a program called assemble.c. This function is the primary function responsible for taking each instruction and splitting it into its components using delimiters like spaces and commas. Once the tokenizer identifies the separate parts, the appropriate values get passed into a function depending on the instruction type. The function then writes the resulting value into a binary file ready to be processed by the emulator. 
+
+\subsection{Assembler implementation reflection}
+Looking back, we believe this was the best implementation strategy. We named files based on their associated instruction types. This strategy made it easy to find certain operations or sections of code when needed. Being able to search for parts of code, in turn, made debugging easier as we were able to find the function causing the error and fix it fairly quickly. Furthermore, as mentioned before, we were able to reduce code redundancy by taking out common functions into a utility file.
+
+\section{Group Project Extension}
+\subsection{The main idea}
+We decided to create a simplified version of the snake game for our extension. In the game's first version, the program prompted the player to enter a board size bigger than 3x3. The system then generated the board, and the player would play the game. Every time the snake eats a food item (represented by *), the score increases by 1 point, and hitting the edge of the board ends the game.
+
+To further enhance the game, we added two modes the player can choose from: High Score Mode – aim to get the highest score without crashing into the walls, and Fastest to Ten Mode – aim to get 10 points in the shortest time possible. 
+
+\subsection{Compatibility}
+We encountered several minor problems during the development of the extension, like the food item being generated on a border or exactly at the same place as the snake resulting in the food item not being visible. Most of these were quick fixes. However, one problem we spent a lot of time on was having to press enter every time we wanted to make a move (e.g. having to press w and enter to go up). 
+
+After thorough research, we found that we had to disable the ICANON flag - enabled by default, and then enable it again at the end. This method only works in UNIX environments; hence our game is not yet compatible with Windows devices.
+
+\subsection{Reflection}
+Our initial aim was to develop a simpler version of the snake game, which we have successfully achieved. Given more time, we would have worked on improving the game further. We could have done this by making the snake grow every time it ate a food item and improving the user interface. Overall, we are happy with what we accomplished and aware of things we could have done to enhance the game further. 
+
+\section{Testing Methods}
+\subsection{Emulator}
+After splitting our tasks for the emulator - as outlined in the interim report, we coded our sections and tested our code locally. However, we did not run any tests until we had written the entire emulator codebase and merged it with the master branch. When we eventually ran the tests, several of them failed. 
+
+The unfortunate effect of this testing method was that when the tests failed, we did not know which part or parts of the codebase were causing the tests to fail. For this reason, we spent a lot of time trying to identify bugs and fix them. 
+
+Having discussed this issue within the team, we realized that a better testing method would be to run tests incrementally. This method would help us immediately determine the section of code which did not behave as expected. This incremental test strategy is what we adopted for testing the assembler and the extension. 
+
+\subsection{Assembler}
+We introduced an incremental test strategy for the assembler to minimize the time spent fixing bugs. We ran tests at regular time intervals. This strategy was much better than running all the tests at the end, as we were able to identify bugs a lot sooner. Nonetheless, this method was still not perfect. There were times when a lot of code was written and pushed to GitLab, leading to the same problem of us not knowing which section of the codebase led to which error. 
+
+After discussing this issue, we decided that it would be better to run tests after writing a certain amount of code rather than running tests at regular time intervals. This method would ensure that the amount of new code that could potentially lead to errors never becomes too difficult to handle, so this is the method we used to test our extension.
+
+\subsection{Extension}
+For our extension, we tested the code after we wrote each function. After writing a function, we tested whether or not the game did what we expected it to do by printing the values of variables and calling functions from the main function. Occasionally, there were a few errors, but because we knew which section of the code to look at, these were easy to fix. 
+
+Overall, this was the best possible testing method for the extension because it was easy to run tests after having written a function. However, this would not have been the best testing strategy for the assembler and emulator because they consisted of several functions and running tests after writing a single function would have significantly reduced our efficiency. So we believe that, in general, incremental testing is the best approach; testing at regular time intervals works best for larger codebases, while testing after each function works better for smaller codebases.
+
+\section{Style of work}
+\subsection{Splitting the work}
+While working on the emulator, we split the tasks in a way everyone was happy with and ensured that everyone had a fair amount of workload (we discussed this in the interim report). When splitting the tasks for the assembler, we decided to continue working on the same instructions we had worked on for the emulator as we had become familiar with the structure of the instructions. We split the additional instructions (e.g. special instructions) and tasks (e.g. implementing the tokenizer) equally among all of us. This strategy was good because we always ensured everyone had an equal workload, and we could learn from the experience rather than stress about it. 
+
+\subsection{Methods of communication}
+The first team meeting was in person, where we decided on the implementation of the emulator and split the tasks. After this initial meeting, we agreed to meet online using Microsoft Teams regularly and discuss the progress we had made individually and solve any problems we encountered. 
+
+However, within a few days, we realized we were not making much progress by communicating only online. We agreed to meet daily to solve this problem and work on the project together. We made much more progress when working together as we could help each other better and work without losing focus. We continued working like this throughout the duration of the project. 
+
+\subsection{Work style reflection}
+We believe it was a good decision to meet regularly in person and work through the project together. We made sure that no one was left behind, and as a team, we were progressing and meeting the deadlines we set for ourselves. We have met all our goals and completed the project to a good standard. 
+
+We were also very good at splitting the work. Initially, we struggled to make sense of what we had to do, but once we became familiar with our assigned instructions, the following parts became easy and fun to complete. 
+
+The only thing we feel we could change next time is to start the project a little sooner. By starting sooner, we would have avoided a lot of stress - worrying about not finishing in time, and accounted for any unforeseen circumstances. Overall, we worked well as a team and worked hard to complete the project to the best of our ability. 
+
+\section{Individual Reflections}
+\subsection*{Shweta Banerjee}
+Working on this project has had several positive impacts; at the same time, it has highlighted a couple of areas of improvement too. 
+
+I have strengthened my knowledge of the C programming language and now better understand assembly instructions and how they work. I learned more about the syntax and semantics of C and also about general good practice and the traps and pitfalls of the language. I was able to apply my learning to solve different problems and optimize our code. 
+
+In retrospect, we delayed starting the project, which occasionally made us feel stressed about the approaching deadlines. Next time, I would like to start working on any given project as soon as possible to avoid unnecessary stress. We were a successful team, and no significant changes are needed, but we could use our experiences to better prepare for future projects. 
+
+\subsection*{Taeho Kim}
+I feel like we worked well together as a group. I have heard that for some groups, people never replied to their group team members and did not participate in the project at all. Thankfully, everyone in our group was very cooperative. In hindsight, I think we could have started our work a bit early in the beginning as we had to rush to meet our interim deadline. Overall, I am happy that I got to work with my teammates and I hope to work with them again in future group projects. 
+
+\subsection*{Mithun Sri}
+Working on the C project for the past few weeks has given me a real insight into the development process for software. I have found that communication was vital in order for our team to be able to sort issues and achieve our tasks, and having strong communication with my team during this project has helped demonstrate to me how useful it is. I feel that the mistakes we made during this  project was not being more open-minded towards how our code could be used by others in the team and by ourselves in the future. 
+
+I found that I enjoyed two components of the development process heavily. I enjoyed debugging the program for errors and trying to figure out where it was facing issues, and I think this is a role I would be more keen to take on in upcoming projects. Secondly, I also enjoyed using the git version control system. Although I have used git in the past, I haven’t used it in a team and there were many times I found myself using new features of git I had not before.
+
+Working with my team for this project has helped give me insight into my strengths and weaknesses and how I should expect to adapt to different circumstances in the future.
+
+\subsection*{Devin Fernando}
+I think over the past 4 weeks as a team, we integrated well and had no problem splitting up the workload evenly which I thought would be a problem at the start. For our project however, I think we were rather pressured for time, especially for the extension. This meant we were not able to deliver a final product as refined as we would have liked. The main hurdles we were faced with, I think, were common first year computing student problems such as not knowing git as much as we would have liked and not being as efficient with our time. Going forward we will certainly take with us these lessons learnt and improve on them for future group projects.
 
 \end{document}
